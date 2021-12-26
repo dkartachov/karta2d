@@ -1,14 +1,12 @@
 #include <iostream>
-#include <SDL.h>
-#include "SimpleECS/SimpleECS.h"
-#include "SimpleECS/Components.h"
+#include "Application.h"
 
 int main(int argc, char** args) {
 
-	Entity ent;
+	Application* app = Application::Instance();
 
-	ent.AddComponent<Transform2D>();
-	ent.GetComponent<Transform2D>()->toString();
+	app->run();
+	app->exit();
 
 	std::cin.get();
 	return 0;
