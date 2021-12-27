@@ -41,6 +41,11 @@ public:
 		return rotation;
 	}
 
+	// Translate entity by a certain amount
+	void translate(Vector2D amount) {
+		position += amount;
+	}
+
 	// Rotate (deg) by a certain amount (counter-clockwise positive)
 	void rotate(float delta) {
 		rotation += delta;

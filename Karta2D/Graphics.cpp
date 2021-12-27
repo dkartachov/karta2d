@@ -85,6 +85,42 @@ void Graphics::drawSquare(SDL_Rect* rect, SDL_Color color) {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
+void Graphics::drawCircle(Vector2D position, const int radius, bool fill, SDL_Color color) {
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+	int x = radius - 1;
+	int y = 0;
+	int dx = 1;
+	int dy = 1;
+	const int diameter = 2 * radius;
+	int error = (dx - diameter);
+
+	while (x >= y) {
+		SDL_RenderDrawPoint(renderer, position.x + x, position.y + y);
+		SDL_RenderDrawPoint(renderer, position.x + x, position.y - y);
+		SDL_RenderDrawPoint(renderer, position.x - x, position.y + y);
+		SDL_RenderDrawPoint(renderer, position.x - x, position.y - y);
+		SDL_RenderDrawPoint(renderer, position.x + y, position.y + x);
+		SDL_RenderDrawPoint(renderer, position.x + y, position.y - x);
+		SDL_RenderDrawPoint(renderer, position.x - y, position.y + x);
+		SDL_RenderDrawPoint(renderer, position.x - y, position.y - x);
+
+		if (error <= 0) {
+			y++;
+			error += dy;
+			dy += 2;
+		}
+
+		if (error > 0) {
+			x--;
+			dx += 2;
+			error += (dx - diameter);
+		}
+	}
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
+
 void Graphics::drawTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* rect, float angle, SDL_RendererFlip flip) {
 	SDL_RenderCopyEx(renderer, texture, clip, rect, angle, NULL, flip);
 }

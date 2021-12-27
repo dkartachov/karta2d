@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
+#include "Tools/Vector2D.h"
 
 class Graphics {
 public:
@@ -16,6 +17,7 @@ public:
 	SDL_Texture* createText(TTF_Font* font, std::string text, SDL_Color color);
 
 	void drawSquare(SDL_Rect* rect, SDL_Color color = { 255, 255, 255, 255 });
+	void drawCircle(Vector2D position, const int radius, bool fill, SDL_Color color = { 255, 255, 255, 255 });
 	void drawTexture(SDL_Texture* texture, SDL_Rect* clip = NULL, SDL_Rect* rect = NULL, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	void clear();

@@ -53,5 +53,8 @@
     <ClInclude Include="SimpleECS\Components\Square.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleECS\Components\Circle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
