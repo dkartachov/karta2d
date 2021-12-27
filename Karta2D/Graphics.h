@@ -22,8 +22,8 @@ public:
 	void render();
 	void exit();
 public:
-	static const int SCREEN_WIDTH = 800;
-	static const int SCREEN_HEIGHT = 800;
+	static const int SCREEN_WIDTH = 1600;
+	static const int SCREEN_HEIGHT = 1200;
 private:
 	const char* TITLE = "Application";
 	static Graphics* instance;

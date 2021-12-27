@@ -40,7 +40,6 @@ void Application::earlyUpdate() {
 void Application::update() {
 	//ent.GetComponent<Square>()->setSize(ent.GetComponent<Square>()->getSize().x + 1, ent.GetComponent<Square>()->getSize().y + 1);
 	ent.GetComponent<Transform2D>()->setPosition(ent.GetComponent<Transform2D>()->getPosition() + oneVector);
-	//ent.GetComponent<Square>()->toString();
 	ent.update();
 }
 
@@ -67,10 +66,11 @@ void Application::run() {
 
 		timer->update();
 
-		while (SDL_PollEvent(&event))
+		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)
 				quit = true;
-
+		}
+		
 		if (timer->getDeltaTime() >= 1.0f / FRAME_RATE) {
 
 			earlyUpdate();

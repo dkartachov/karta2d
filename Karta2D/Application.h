@@ -13,8 +13,8 @@ public:
 private:
 	static void release();
 
-	~Application();
 	Application();
+	~Application();
 
 	void earlyUpdate();
 	void update();

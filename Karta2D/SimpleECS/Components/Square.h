@@ -5,6 +5,8 @@
 class Square : public Component {
 public:
 	Square() {
+		graphics = Graphics::Instance();
+
 		color = { 255, 255, 255, 255 };
 		size = 50 * oneVector;
 		rect.w = size.x;
@@ -13,7 +15,6 @@ public:
 	}
 
 	void init() override {
-		graphics = Graphics::Instance();
 
 		if (!entity->HasComponent<Transform2D>()) {
 			entity->AddComponent<Transform2D>();
