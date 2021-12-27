@@ -79,8 +79,13 @@ SDL_Texture* Graphics::createText(TTF_Font* font, std::string text, SDL_Color co
 	return texture;
 }
 
-void Graphics::drawTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* rect, float angle, SDL_RendererFlip flip) {
+void Graphics::drawSquare(SDL_Rect* rect, SDL_Color color) {
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(renderer, rect);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
 
+void Graphics::drawTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* rect, float angle, SDL_RendererFlip flip) {
 	SDL_RenderCopyEx(renderer, texture, clip, rect, angle, NULL, flip);
 }
 

@@ -8,6 +8,6 @@ int main(int argc, char** args) {
 	app->run();
 	app->exit();
 
-	std::cin.get();
+	//std::cin.get();
 	return 0;
 }

@@ -21,6 +21,11 @@ Application::Application() {
 	timer = Timer::Instance();
 
 	ent.AddComponent<Transform2D>();
+	ent.AddComponent<Square>();
+
+	ent.GetComponent<Square>()->setSize(100, 100);
+	ent.GetComponent<Square>()->setColor(100, 255, 100);
+	ent.GetComponent<Transform2D>()->setScale(Vector2D(1, 1.2));
 }
 
 Application::~Application() {
@@ -33,14 +38,10 @@ void Application::earlyUpdate() {
 }
 
 void Application::update() {
-	Transform2D* transform = ent.GetComponent<Transform2D>();
-
-	Vector2D position = transform->getPosition();
-	position.x++;
-	position.y++;
-
-	transform->setPosition(position);
-	transform->toString();
+	//ent.GetComponent<Square>()->setSize(ent.GetComponent<Square>()->getSize().x + 1, ent.GetComponent<Square>()->getSize().y + 1);
+	ent.GetComponent<Transform2D>()->setPosition(ent.GetComponent<Transform2D>()->getPosition() + oneVector);
+	//ent.GetComponent<Square>()->toString();
+	ent.update();
 }
 
 void Application::lateUpdate() {
@@ -53,7 +54,7 @@ void Application::render() {
 
 	////RENDER ENTITIES HERE////
 
-
+	ent.render();
 
 	///////////////////////////
 
