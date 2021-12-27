@@ -82,43 +82,60 @@ SDL_Texture* Graphics::createText(TTF_Font* font, std::string text, SDL_Color co
 void Graphics::drawSquare(SDL_Rect* rect, SDL_Color color) {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(renderer, rect);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
 }
 
-void Graphics::drawCircle(Vector2D position, const int radius, bool fill, SDL_Color color) {
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+void Graphics::drawCircle(Vector2D position, int radius, int thickness, SDL_Color outlineColor, bool filled, SDL_Color fillColor) {
+	SDL_SetRenderDrawColor(renderer, outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
-	int x = radius - 1;
-	int y = 0;
-	int dx = 1;
-	int dy = 1;
-	const int diameter = 2 * radius;
-	int error = (dx - diameter);
+	int t = thickness <= radius ? radius - thickness : 0;
+	bool done = false;
 
-	while (x >= y) {
-		SDL_RenderDrawPoint(renderer, position.x + x, position.y + y);
-		SDL_RenderDrawPoint(renderer, position.x + x, position.y - y);
-		SDL_RenderDrawPoint(renderer, position.x - x, position.y + y);
-		SDL_RenderDrawPoint(renderer, position.x - x, position.y - y);
-		SDL_RenderDrawPoint(renderer, position.x + y, position.y + x);
-		SDL_RenderDrawPoint(renderer, position.x + y, position.y - x);
-		SDL_RenderDrawPoint(renderer, position.x - y, position.y + x);
-		SDL_RenderDrawPoint(renderer, position.x - y, position.y - x);
+	do {
+		int x = radius - 1;
+		int y = 0;
+		int dx = 1;
+		int dy = 1;
+		const int diameter = 2 * radius;
+		int error = (dx - diameter);
 
-		if (error <= 0) {
-			y++;
-			error += dy;
-			dy += 2;
+		while (x >= y) {
+			SDL_RenderDrawPoint(renderer, position.x + x, position.y + y);
+			SDL_RenderDrawPoint(renderer, position.x + x, position.y - y);
+			SDL_RenderDrawPoint(renderer, position.x - x, position.y + y);
+			SDL_RenderDrawPoint(renderer, position.x - x, position.y - y);
+			SDL_RenderDrawPoint(renderer, position.x + y, position.y + x);
+			SDL_RenderDrawPoint(renderer, position.x + y, position.y - x);
+			SDL_RenderDrawPoint(renderer, position.x - y, position.y + x);
+			SDL_RenderDrawPoint(renderer, position.x - y, position.y - x);
+
+			if (error <= 0) {
+				y++;
+				error += dy;
+				dy += 2;
+			}
+
+			if (error > 0) {
+				x--;
+				dx += 2;
+				error += (dx - diameter);
+			}
 		}
 
-		if (error > 0) {
-			x--;
-			dx += 2;
-			error += (dx - diameter);
-		}
-	}
+		radius--;
 
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		if (radius <= t) {
+			if (filled && x > -1) {
+				SDL_SetRenderDrawColor(renderer, fillColor.r, fillColor.g, fillColor.b, fillColor.a);
+			}
+			else {
+				done = true;
+			}
+		}
+
+	} while (!done);
+	
+	SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
 }
 
 void Graphics::drawTexture(SDL_Texture* texture, SDL_Rect* clip, SDL_Rect* rect, float angle, SDL_RendererFlip flip) {

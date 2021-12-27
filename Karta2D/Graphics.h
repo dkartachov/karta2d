@@ -16,8 +16,8 @@ public:
 	SDL_Texture* loadTexture(std::string path);
 	SDL_Texture* createText(TTF_Font* font, std::string text, SDL_Color color);
 
-	void drawSquare(SDL_Rect* rect, SDL_Color color = { 255, 255, 255, 255 });
-	void drawCircle(Vector2D position, const int radius, bool fill, SDL_Color color = { 255, 255, 255, 255 });
+	void drawSquare(SDL_Rect* rect, SDL_Color color = { 0, 0, 0, 255 });
+	void drawCircle(Vector2D position, int radius, int thickness, SDL_Color outlineColor = { 255, 255, 255, 255 }, bool filled = false, SDL_Color fillColor = { 255, 255, 255, 255 });
 	void drawTexture(SDL_Texture* texture, SDL_Rect* clip = NULL, SDL_Rect* rect = NULL, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	void clear();
@@ -28,6 +28,7 @@ public:
 	static const int SCREEN_HEIGHT = 1200;
 private:
 	const char* TITLE = "Application";
+	const SDL_Color BACKGROUND = { 128, 128, 128, 255 };
 	static Graphics* instance;
 	SDL_Window* window;
 	SDL_Renderer* renderer;

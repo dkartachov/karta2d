@@ -6,7 +6,9 @@ class Circle : public Component {
 public:
 	Circle() {
 		radius = 50;
-		color = { 255, 255, 255, 255 };
+		thickness = 1;
+		filled = false;
+		outlineColor = fillColor = { 255, 255, 255, 255 };
 		transform = nullptr;
 	}
 
@@ -22,12 +24,22 @@ public:
 		this->radius = radius;
 	}
 
+	void setOutline(int thickness, SDL_Color outlineColor = { 255, 255, 255, 255 }) {
+		this->thickness = thickness;
+		this->outlineColor = outlineColor;
+	}
+
+	void fill(SDL_Color fillColor = { 0, 0, 0, 255 }) {
+		filled = true;
+		this->fillColor = fillColor;
+	}
+
 	void update() override {
 		position = transform->getPosition();
 	}
 
 	void render() override {
-		Graphics::Instance()->drawCircle(position, radius, false, color);
+		Graphics::Instance()->drawCircle(position, radius, thickness, outlineColor, filled, fillColor);
 	}
 
 	void toString() override {
@@ -36,7 +48,9 @@ public:
 
 private:
 	int radius;
-	SDL_Color color;
+	int thickness;
+	bool filled;
+	SDL_Color outlineColor, fillColor;
 	Transform2D* transform;
 	Vector2D position;
 };
