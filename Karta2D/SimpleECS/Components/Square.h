@@ -46,7 +46,8 @@ public:
 	}
 
 	void render() override {
-		graphics->drawSquare(&rect, color);
+		//graphics->drawSquare(&rect, color);
+		graphics->drawBox(*transform, size);
 	}
 
 	void toString() override {

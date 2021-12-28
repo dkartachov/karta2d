@@ -79,6 +79,36 @@ SDL_Texture* Graphics::createText(TTF_Font* font, std::string text, SDL_Color co
 	return texture;
 }
 
+void Graphics::drawBox(Transform2D transform, Vector2D size, SDL_Color color) {
+
+	float x = transform.getPosition().x, y = transform.getPosition().y;
+	double w = size.x, h = size.y;
+
+	float d = sqrt(0.25 * (w * w + h * h));
+	float theta = transform.getRotation() * DEG_TO_RAD;
+
+	float x1 = x - d * cos(theta + 0.25 * PI);
+	float y1 = y - d * sin(theta + 0.25 * PI);
+
+	float x2 = x1 + w * cos(theta);
+	float y2 = y1 + w * sin(theta);
+
+	float x3 = 2 * x - x1;
+	float y3 = 2 * y - y1;
+
+	float x4 = x1 - h * sin(theta);
+	float y4 = y1 + h * cos(theta);
+
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+	SDL_RenderDrawLineF(renderer, x1, y1, x2, y2); //(x1,y1) to (x2,y2)
+	SDL_RenderDrawLineF(renderer, x2, y2, x3, y3); //(x2,y2) to (x3,y3)
+	SDL_RenderDrawLineF(renderer, x3, y3, x4, y4); //(x3,y3) to (x4,y4)
+	SDL_RenderDrawLineF(renderer, x4, y4, x1, y1); //(x4,y4) to (x1,y1)
+
+	SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
+}
+
 void Graphics::drawSquare(SDL_Rect* rect, SDL_Color color) {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderFillRect(renderer, rect);

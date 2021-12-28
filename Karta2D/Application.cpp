@@ -21,11 +21,11 @@ Application::Application() {
 	timer = Timer::Instance();
 
 	ent.AddComponent<Transform2D>();
-	ent.AddComponent<Circle>();
-
 	ent.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	ent.GetComponent<Circle>()->setRadius(100);
-	ent.GetComponent<Circle>()->setOutline(5);
+	ent.GetComponent<Transform2D>()->setRotation(0);
+
+	ent.AddComponent<Square>();
+	ent.GetComponent<Square>()->setSize(100, 100);
 }
 
 Application::~Application() {
@@ -38,8 +38,9 @@ void Application::earlyUpdate() {
 }
 
 void Application::update() {
-	//ent.GetComponent<Transform2D>()->translate(Vector2D(-1, -2));
-	//ent.GetComponent<Transform2D>()->toString();
+	ent.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(20, -10));
+	ent.GetComponent<Transform2D>()->rotate(10 * timer->Instance()->getDeltaTime());
+
 	ent.update();
 }
 

@@ -34,11 +34,12 @@ public:
 
 	// Set rotation (deg) to a specific angle (measured counter-clockwise)
 	void setRotation(float angle) {
-		this->rotation = angle;
+		this->rotation = angle * DEG_TO_RAD;
 	}
 
-	float getRotation(SPACE space) {
-		return rotation;
+	// Get rotation in degrees
+	float getRotation(SPACE space = world) {
+		return rotation * RAD_TO_DEG;
 	}
 
 	// Translate entity by a certain amount
@@ -48,7 +49,7 @@ public:
 
 	// Rotate (deg) by a certain amount (counter-clockwise positive)
 	void rotate(float delta) {
-		rotation += delta;
+		rotation -= delta * DEG_TO_RAD;
 	}
 
 	void init() override {
