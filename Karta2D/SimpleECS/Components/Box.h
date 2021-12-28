@@ -7,8 +7,11 @@ public:
 	Box() {
 		graphics = Graphics::Instance();
 		size = 50 * oneVector;
+		width = size.x;
+		height = size.y;
 		color = { 255, 255, 255, 255 };
 		filled = false;
+		transform = nullptr;
 	}
 
 	void init() override {
@@ -33,24 +36,27 @@ public:
 
 	void setSize(float width, float height) {
 		size = { width, height };
+		this->width = width;
+		this->height = height;
 	}
 
 	Vector2D getSize() {
-		return size;
+		return Vector2D(width, height);
 	}
 
 	void update() override {
-		
+		width = size.x * transform->getScale().x;
+		height = size.y * transform->getScale().y;
 	}
 
 	void render() override {
-		graphics->drawBox(*transform, size, filled, color);
+		graphics->drawBox(*transform, Vector2D(width, height), filled, color);
 	}
 
 	void toString() override {
 		std::printf("Box:\n");
 		transform->toString();
-		std::printf("Width = %f, Height = %f\n", size.x, size.y);
+		std::printf("Width = %.2f, Height = %.2f\n", width, height);
 	}
 
 private:
@@ -59,4 +65,5 @@ private:
 	Vector2D size;
 	SDL_Color color;
 	bool filled;
+	float width, height;
 };
