@@ -18,7 +18,6 @@ public:
 	SDL_Texture* createText(TTF_Font* font, std::string text, SDL_Color color);
 
 	void drawBox(Transform2D transform, Vector2D size, SDL_Color color = { 0, 0, 0, 255 });
-	void drawSquare(SDL_Rect* rect, SDL_Color color = { 0, 0, 0, 255 });
 	void drawCircle(Vector2D position, int radius, int thickness, SDL_Color outlineColor = { 255, 255, 255, 255 }, bool filled = false, SDL_Color fillColor = { 255, 255, 255, 255 });
 	void drawTexture(SDL_Texture* texture, SDL_Rect* clip = NULL, SDL_Rect* rect = NULL, float angle = 0.0f, SDL_RendererFlip flip = SDL_FLIP_NONE);
 

@@ -109,12 +109,6 @@ void Graphics::drawBox(Transform2D transform, Vector2D size, SDL_Color color) {
 	SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
 }
 
-void Graphics::drawSquare(SDL_Rect* rect, SDL_Color color) {
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderFillRect(renderer, rect);
-	SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
-}
-
 void Graphics::drawCircle(Vector2D position, int radius, int thickness, SDL_Color outlineColor, bool filled, SDL_Color fillColor) {
 	SDL_SetRenderDrawColor(renderer, outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 

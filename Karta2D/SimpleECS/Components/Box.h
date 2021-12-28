@@ -2,9 +2,9 @@
 #include "Graphics.h"
 #include "Transform2D.h"
 
-class Square : public Component {
+class Box : public Component {
 public:
-	Square() {
+	Box() {
 		graphics = Graphics::Instance();
 
 		color = { 255, 255, 255, 255 };
@@ -46,12 +46,11 @@ public:
 	}
 
 	void render() override {
-		//graphics->drawSquare(&rect, color);
 		graphics->drawBox(*transform, size);
 	}
 
 	void toString() override {
-		std::printf("Square:\n");
+		std::printf("Box:\n");
 		transform->toString();
 		std::printf("Width = %f, Height = %f\n", size.x, size.y);
 	}

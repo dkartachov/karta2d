@@ -161,7 +161,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="SimpleECS\Components.h" />
     <ClInclude Include="SimpleECS\Components\Circle.h" />
-    <ClInclude Include="SimpleECS\Components\Square.h" />
+    <ClInclude Include="SimpleECS\Components\Box.h" />
     <ClInclude Include="SimpleECS\Components\Transform2D.h" />
     <ClInclude Include="SimpleECS\SimpleECS.h" />
     <ClInclude Include="Timer.h" />

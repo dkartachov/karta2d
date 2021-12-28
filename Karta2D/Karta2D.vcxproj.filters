@@ -50,7 +50,7 @@
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleECS\Components\Square.h">
+    <ClInclude Include="SimpleECS\Components\Box.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleECS\Components\Circle.h">

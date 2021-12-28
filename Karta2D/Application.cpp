@@ -24,8 +24,8 @@ Application::Application() {
 	ent.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
 	ent.GetComponent<Transform2D>()->setRotation(0);
 
-	ent.AddComponent<Square>();
-	ent.GetComponent<Square>()->setSize(100, 100);
+	ent.AddComponent<Box>();
+	ent.GetComponent<Box>()->setSize(100, 100);
 }
 
 Application::~Application() {
