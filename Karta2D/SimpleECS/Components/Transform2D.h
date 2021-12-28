@@ -34,7 +34,7 @@ public:
 
 	// Set rotation (deg) to a specific angle (measured counter-clockwise)
 	void setRotation(float angle) {
-		this->rotation = angle * DEG_TO_RAD;
+		this->rotation = -angle * DEG_TO_RAD;
 	}
 
 	// Get rotation in degrees

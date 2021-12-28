@@ -30,5 +30,6 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity ent;
+	Entity box;
+	Entity circle;
 };

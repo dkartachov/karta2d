@@ -29,7 +29,7 @@ public:
 		this->outlineColor = outlineColor;
 	}
 
-	void fill(SDL_Color fillColor = { 0, 0, 0, 255 }) {
+	void fill(SDL_Color fillColor = { 255, 255, 255, 255 }) {
 		filled = true;
 		this->fillColor = fillColor;
 	}

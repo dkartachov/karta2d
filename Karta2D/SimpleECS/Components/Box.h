@@ -8,6 +8,7 @@ public:
 		graphics = Graphics::Instance();
 		size = 50 * oneVector;
 		color = { 255, 255, 255, 255 };
+		filled = false;
 	}
 
 	void init() override {
@@ -26,6 +27,10 @@ public:
 		color.a = a;
 	}
 
+	void fill() {
+		filled = true;
+	}
+
 	void setSize(float width, float height) {
 		size = { width, height };
 	}
@@ -39,7 +44,7 @@ public:
 	}
 
 	void render() override {
-		graphics->drawBox(*transform, size);
+		graphics->drawBox(*transform, size, filled, color);
 	}
 
 	void toString() override {
@@ -53,4 +58,5 @@ private:
 	Transform2D* transform;
 	Vector2D size;
 	SDL_Color color;
+	bool filled;
 };

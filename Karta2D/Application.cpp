@@ -20,12 +20,18 @@ Application::Application() {
 	graphics = Graphics::Instance();
 	timer = Timer::Instance();
 
-	ent.AddComponent<Transform2D>();
-	ent.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	ent.GetComponent<Transform2D>()->setRotation(0);
+	box.AddComponent<Transform2D>();
+	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 50, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	box.GetComponent<Transform2D>()->setRotation(0);
 
-	ent.AddComponent<Box>();
-	ent.GetComponent<Box>()->setSize(100, 100);
+	box.AddComponent<Box>();
+	box.GetComponent<Box>()->setSize(100, 50);
+	box.GetComponent<Box>()->fill();
+
+	circle.AddComponent<Circle>();
+	circle.GetComponent<Transform2D>()->setPosition(box.GetComponent<Transform2D>()->getPosition() - Vector2D(100, 0));
+	circle.GetComponent<Circle>()->setRadius(50);
+	circle.GetComponent<Circle>()->setOutline(2);
 }
 
 Application::~Application() {
@@ -38,10 +44,13 @@ void Application::earlyUpdate() {
 }
 
 void Application::update() {
-	ent.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(20, -10));
-	ent.GetComponent<Transform2D>()->rotate(10 * timer->Instance()->getDeltaTime());
+	box.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(20, -20));
+	box.GetComponent<Transform2D>()->rotate(25 * timer->Instance()->getDeltaTime());
 
-	ent.update();
+	circle.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-30, 20));
+
+	box.update();
+	circle.update();
 }
 
 void Application::lateUpdate() {
@@ -54,7 +63,8 @@ void Application::render() {
 
 	////RENDER ENTITIES HERE////
 
-	ent.render();
+	box.render();
+	circle.render();
 
 	///////////////////////////
 

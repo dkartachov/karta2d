@@ -79,16 +79,17 @@ SDL_Texture* Graphics::createText(TTF_Font* font, std::string text, SDL_Color co
 	return texture;
 }
 
-void Graphics::drawBox(Transform2D transform, Vector2D size, SDL_Color color) {
+void Graphics::drawBox(Transform2D transform, Vector2D size, bool fill, SDL_Color color) {
 
-	float x = transform.getPosition().x, y = transform.getPosition().y;
+	double x = transform.getPosition().x, y = transform.getPosition().y;
 	double w = size.x, h = size.y;
 
-	float d = sqrt(0.25 * (w * w + h * h));
-	float theta = transform.getRotation() * DEG_TO_RAD;
+	double diag = sqrt(0.25 * (w * w + h * h));
+	double diagAngle = atan2(h, w);
+	double theta = transform.getRotation() * DEG_TO_RAD;
 
-	float x1 = x - d * cos(theta + 0.25 * PI);
-	float y1 = y - d * sin(theta + 0.25 * PI);
+	double x1 = x - diag * cos(theta + diagAngle);
+	double y1 = y - diag * sin(theta + diagAngle);
 
 	float x2 = x1 + w * cos(theta);
 	float y2 = y1 + w * sin(theta);
@@ -106,6 +107,23 @@ void Graphics::drawBox(Transform2D transform, Vector2D size, SDL_Color color) {
 	SDL_RenderDrawLineF(renderer, x3, y3, x4, y4); //(x3,y3) to (x4,y4)
 	SDL_RenderDrawLineF(renderer, x4, y4, x1, y1); //(x4,y4) to (x1,y1)
 
+	double xx1 = x1, yy1 = y1;
+	double xx2 = x2, yy2 = y2;
+	double d = 0.5 * sqrt(2);
+	double dx = abs(d * sin(theta));
+	double dy = abs(d * cos(theta));
+
+	if (fill) {
+		while (abs(xx1 - x4) >= d || abs(yy1 - y4) >= d) {
+			xx1 = xx1 > x4 ? xx1 - dx : (xx1 < x4 ? xx1 + dx : xx1);
+			yy1 = yy1 > y4 ? yy1 - dy : (yy1 < y4 ? yy1 + dy : yy1);
+			xx2 = xx2 > x3 ? xx2 - dx : (xx2 < x3 ? xx2 + dx : xx2);
+			yy2 = yy2 > y3 ? yy2 - dy : (yy2 < y3 ? yy2 + dy : yy2);
+
+			SDL_RenderDrawLineF(renderer, xx1, yy1, xx2, yy2);
+		}
+	}
+
 	SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
 }
 
@@ -116,22 +134,22 @@ void Graphics::drawCircle(Vector2D position, int radius, int thickness, SDL_Colo
 	bool done = false;
 
 	do {
-		int x = radius - 1;
-		int y = 0;
-		int dx = 1;
-		int dy = 1;
-		const int diameter = 2 * radius;
-		int error = (dx - diameter);
+		float x = radius - 1;
+		float y = 0;
+		float dx = 1;
+		float dy = 1;
+		const float diameter = 2 * radius;
+		float error = (dx - diameter);
 
 		while (x >= y) {
-			SDL_RenderDrawPoint(renderer, position.x + x, position.y + y);
-			SDL_RenderDrawPoint(renderer, position.x + x, position.y - y);
-			SDL_RenderDrawPoint(renderer, position.x - x, position.y + y);
-			SDL_RenderDrawPoint(renderer, position.x - x, position.y - y);
-			SDL_RenderDrawPoint(renderer, position.x + y, position.y + x);
-			SDL_RenderDrawPoint(renderer, position.x + y, position.y - x);
-			SDL_RenderDrawPoint(renderer, position.x - y, position.y + x);
-			SDL_RenderDrawPoint(renderer, position.x - y, position.y - x);
+			SDL_RenderDrawPointF(renderer, position.x + x, position.y + y);
+			SDL_RenderDrawPointF(renderer, position.x + x, position.y - y);
+			SDL_RenderDrawPointF(renderer, position.x - x, position.y + y);
+			SDL_RenderDrawPointF(renderer, position.x - x, position.y - y);
+			SDL_RenderDrawPointF(renderer, position.x + y, position.y + x);
+			SDL_RenderDrawPointF(renderer, position.x + y, position.y - x);
+			SDL_RenderDrawPointF(renderer, position.x - y, position.y + x);
+			SDL_RenderDrawPointF(renderer, position.x - y, position.y - x);
 
 			if (error <= 0) {
 				y++;
