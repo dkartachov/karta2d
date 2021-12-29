@@ -43,8 +43,6 @@ struct Vector2D {
 	}
 
 	inline Vector2D operator+= (const Vector2D& v) {
-		//x += v.x;
-		//y += v.y;
 		return Vector2D(x += v.x, y += v.y);
 	}
 

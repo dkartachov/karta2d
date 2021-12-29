@@ -14,6 +14,28 @@ public:
 	}
 
 	void setScale(Vector2D scale) {
+		if (entity->hasChildren()) {
+			for (auto& child : entity->getChildren()) {
+				Transform2D* childTransform = child->GetComponent<Transform2D>();
+
+				Vector2D childScale = childTransform->getScale();
+				Vector2D childRelPos = childTransform->getPosition() - position;
+
+				Vector2D childRelScaledPos = childRelPos;
+
+				if (childScale.x < scale.x || childScale.x > scale.x) {
+					childRelScaledPos.x = (scale.x / childScale.x) * childRelScaledPos.x;
+				}
+
+				if (childScale.y < scale.y || childScale.y > scale.y) {
+					childRelScaledPos.y = (scale.y / childScale.y) * childRelScaledPos.y;
+				}
+
+				childTransform->translate(childRelScaledPos - childRelPos);
+				childTransform->setScale(scale);
+			}
+		}
+
 		this->scale = scale;
 	}
 

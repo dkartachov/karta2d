@@ -25,8 +25,8 @@ public:
 	void render();
 	void exit();
 public:
-	static const int SCREEN_WIDTH = 800;
-	static const int SCREEN_HEIGHT = 800;
+	static const int SCREEN_WIDTH = 1400;
+	static const int SCREEN_HEIGHT = 1000;
 private:
 	const char* TITLE = "Karta2D";
 	const SDL_Color BACKGROUND = { 128, 128, 128, 255 };

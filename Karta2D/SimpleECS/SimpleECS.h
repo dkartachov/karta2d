@@ -77,6 +77,17 @@ public:
 		}
 	}
 
+	void removeChildren(std::vector<Entity*> children) {
+		for (const auto& child : children) {
+			int id = child->getId();
+			auto it = std::find_if(this->children.begin(), this->children.end(), [&id](Entity* c) { return c->getId() == id; });
+
+			if (it != this->children.end()) {
+				this->children.erase(it);
+			}
+		}
+	}
+
 	Entity* getChildById(int id) {
 		auto it = std::find_if(children.begin(), children.end(), [&id](Entity* child) { return child->getId() == id; });
 
