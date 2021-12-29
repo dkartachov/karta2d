@@ -24,11 +24,13 @@ public:
 
 	// Set position
 	void setPosition(Vector2D position) {
-		if (entity->hasChild()) {
-			Transform2D* childTransform = entity->getChild()->GetComponent<Transform2D>();
-			Vector2D childPosition = childTransform->getPosition();
+		if (entity->hasChildren()) {
+			for (auto& child : entity->getChildren()) {
+				Transform2D* childTransform = child->GetComponent<Transform2D>();
+				Vector2D childPosition = childTransform->getPosition();
 
-			childTransform->setPosition(childPosition + (position - this->position));
+				childTransform->setPosition(childPosition + (position - this->position));
+			}
 		}
 
 		this->position = position;
@@ -51,8 +53,10 @@ public:
 
 	// Translate entity by a certain amount
 	void translate(Vector2D amount) {
-		if (entity->hasChild()) {
-			entity->getChild()->GetComponent<Transform2D>()->translate(amount);
+		if (entity->hasChildren()) {
+			for (auto& child : entity->getChildren()) {
+				child->GetComponent<Transform2D>()->translate(amount);
+			}
 		}
 
 		position += amount;
@@ -60,15 +64,17 @@ public:
 
 	// Rotate (deg) by a certain amount (counter-clockwise positive)
 	void rotate(float delta) {
-		if (entity->hasChild()) {
-			entity->getChild()->GetComponent<Transform2D>()->rotate(delta);
+		if (entity->hasChildren()) {
+			for (auto& child : entity->getChildren()) {
+				child->GetComponent<Transform2D>()->rotate(delta);
 
-			Vector2D childPos = entity->getChild()->GetComponent<Transform2D>()->getPosition();
-			childPos = childPos - position;
-			childPos.rotateVector(delta);
-			childPos = childPos + position;
+				Vector2D childPos = child->GetComponent<Transform2D>()->getPosition();
+				childPos = childPos - position;
+				childPos.rotateVector(delta);
+				childPos = childPos + position;
 
-			entity->getChild()->GetComponent<Transform2D>()->setPosition(childPos);
+				child->GetComponent<Transform2D>()->setPosition(childPos);
+			}
 		}
 		
 		rotation -= delta * DEG_TO_RAD;

@@ -51,6 +51,7 @@ public:
 		static int id = 0;
 		id++;
 
+		this->id = id;
 		name = "Entity " + std::to_string(id);
 	}
 
@@ -62,16 +63,32 @@ public:
 		return name;
 	}
 
-	bool hasChild() {
-		return child != nullptr;
+	int getId() {
+		return id;
 	}
 
-	void setChild(Entity* child) {
-		this->child = child;
+	bool hasChildren() {
+		return children.size() > 0;
 	}
 
-	Entity* getChild() {
-		return child;
+	void addChildren(std::vector<Entity*> children) {
+		for (const auto& child : children) {
+			this->children.emplace_back(child);
+		}
+	}
+
+	Entity* getChildById(int id) {
+		auto it = std::find_if(children.begin(), children.end(), [&id](Entity* child) { return child->getId() == id; });
+
+		if (it != children.end()) {
+			return children.at(it - children.begin());
+		}
+
+		return nullptr;
+	}
+
+	std::vector<Entity*> getChildren() {
+		return children;
 	}
 
 	void update() {
@@ -119,25 +136,13 @@ public:
 		return componentBitSet[getTypeId<T>()];
 	}
 
-	//template <typename T>
-	//void RemoveComponent() {
-	//	std::string typeId = typeid(T).name();
-
-	//	typeIds.erase(std::find(typeIds.begin(), typeIds.end(), typeId));
-
-	//	auto it = std::find_if(components.begin(), components.end(), [&typeId](Component* c) { return c->getId() == typeId; });
-	//	
-	//	if (it != components.end()) {
-	//		components.erase(it);
-	//	}
-	//}
-
 private:
+	int id;
 	std::string name;
-	Entity* child = nullptr;
 	bool active = true;
 	ComponentArray componentArray;
 	ComponentBitSet componentBitSet;
 
 	std::vector<std::unique_ptr<Component>> components;
+	std::vector<Entity*> children;
 };
