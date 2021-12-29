@@ -25,6 +25,19 @@ struct Vector2D {
 		return (float) sqrt(MagnitudeSquared());
 	}
 
+	// Rotate vector by an angle in degrees (counter-clockwise positive)
+	inline void rotateVector(float angle) {
+		angle = angle * DEG_TO_RAD;
+
+		double cosine = cos(angle);
+		double sine = sin(angle);
+		float newX = x * cosine + y * sine;
+		float newY = -x * sine + y * cosine;
+
+		x = newX;
+		y = newY;
+	}
+
 	inline Vector2D operator+ (const Vector2D& v) {
 		return Vector2D(x + v.x, y + v.y);
 	}
@@ -42,12 +55,6 @@ struct Vector2D {
 
 inline Vector2D operator* (const float& c, const Vector2D& v) {
 	return Vector2D(c * v.x, c * v.y);
-}
-
-// Rotate a vector by an angle in degrees.
-inline Vector2D rotateVector(Vector2D& v, float angle) {
-	angle *= DEG_TO_RAD;
-	return Vector2D(v.x * cos(angle) - v.y * sin(angle), v.x * sin(angle) + v.y * cos(angle));
 }
 
 const Vector2D zeroVector = { 0.0, 0.0 };

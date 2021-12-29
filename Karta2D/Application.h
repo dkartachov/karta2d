@@ -30,6 +30,7 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity box;
-	Entity circle;
+	Entity parentBox;
+	Entity childBox;
+	Entity childChildBox;
 };

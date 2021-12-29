@@ -3,6 +3,7 @@
 #include <array>
 #include <memory>
 #include <bitset>
+#include <string>
 
 class Component;
 class Entity;
@@ -46,6 +47,33 @@ public:
 
 class Entity {
 public:
+	Entity() {
+		static int id = 0;
+		id++;
+
+		name = "Entity " + std::to_string(id);
+	}
+
+	void setName(std::string name) {
+		this->name = name;
+	}
+
+	std::string getName() {
+		return name;
+	}
+
+	bool hasChild() {
+		return child != nullptr;
+	}
+
+	void setChild(Entity* child) {
+		this->child = child;
+	}
+
+	Entity* getChild() {
+		return child;
+	}
+
 	void update() {
 		for (auto& const component : components) {
 			if (component->isActive()) {
@@ -105,6 +133,8 @@ public:
 	//}
 
 private:
+	std::string name;
+	Entity* child = nullptr;
 	bool active = true;
 	ComponentArray componentArray;
 	ComponentBitSet componentBitSet;

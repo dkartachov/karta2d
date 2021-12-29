@@ -32,5 +32,6 @@ private:
 	const SDL_Color BACKGROUND = { 128, 128, 128, 255 };
 	static Graphics* instance;
 	SDL_Window* window;
+public:
 	SDL_Renderer* renderer;
 };
