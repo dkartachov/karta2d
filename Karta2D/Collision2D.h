@@ -1,6 +1,7 @@
 #pragma once
 #include "SimpleECS/EntityManager.h"
 #include "SimpleECS/Components.h"
+#include <tuple>
 
 class Collision2D {
 public:
@@ -63,20 +64,68 @@ public:
 		}
 	}
 
+	static void resolveCollision(Entity& thisEntity, Entity& entity, Vector2D collisionNormal) {
+		Vector2D thisEntityVel = thisEntity.GetComponent<Rigidbody2D>()->getVelocity();
+		Vector2D entityVel = entity.GetComponent<Rigidbody2D>()->getVelocity();
+
+		Vector2D relVelocity = thisEntityVel - entityVel;
+		float velAlongNormal = Vector2D::dot(relVelocity, collisionNormal);
+
+		float restitution = 1;
+		float j = -(1 + restitution) * velAlongNormal;
+		j /= 1 / thisEntity.GetComponent<Rigidbody2D>()->getMass() + 1 / entity.GetComponent<Rigidbody2D>()->getMass();
+
+		Vector2D impulse = j * collisionNormal;
+
+		thisEntity.GetComponent<Rigidbody2D>()->setVelocity(thisEntityVel + (1 / thisEntity.GetComponent<Rigidbody2D>()->getMass()) * impulse);
+		entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - (1 / entity.GetComponent<Rigidbody2D>()->getMass()) * impulse);
+	}
+
+	static void resolveCollisions(std::vector<std::tuple<Entity*, Entity*, Vector2D>>& collisionTuples) {
+		for (auto& colTuple : collisionTuples) {
+			Entity* entA = std::get<0>(colTuple);
+			Entity* entB = std::get<1>(colTuple);
+			Vector2D collisionNormal = std::get<2>(colTuple);
+
+			resolveCollision(*entA, *entB, collisionNormal);
+		}
+	}
+
 	static void resolveAABBCollisions() {
 		std::vector<Entity*>& entities = EntityManager::getInstance().getEntities();
+		std::vector<std::tuple<Entity*, Entity*, Vector2D>> collisionTuples;
 
 		for (auto& thisEntity : entities) {
 			for (auto& entity : entities) {
 				if (thisEntity->getId() != entity->getId()) {
 					if (AABB(*thisEntity, *entity)) {
-						Vector2D n = getNormal(*thisEntity, *entity);
-						std::printf("Normal for Entity '%s' is (%d, %d)\n", thisEntity->getName().c_str(), (int)n.x, (int)n.y);
+						Vector2D collisionNormal = getNormal(*thisEntity, *entity);
+
+						auto it = std::find_if(collisionTuples.begin(), collisionTuples.end(), [&](std::tuple<Entity*, Entity*, Vector2D> colTuple) {
+							Entity* entA = std::get<0>(colTuple);
+							Entity* entB = std::get<1>(colTuple);
+
+							bool foundFirst = entA->getId() == thisEntity->getId() || entA->getId() == entity->getId();
+							bool foundSecond = entB->getId() == thisEntity->getId() || entB->getId() == entity->getId();
+
+							return foundFirst && foundSecond;
+						});
+
+						if (it != collisionTuples.end()) {
+							continue;
+						}
+
+						collisionTuples.push_back({ thisEntity, entity, collisionNormal });
+
+						//std::printf("Normal for Entity '%s' is (%d, %d)\n", thisEntity->getName().c_str(), (int)collisionNormal.x, (int)collisionNormal.y);
 						//std::printf("Collision detected between entities %d and %d\n", thisEntity->getId(), entity->getId());
 					}
 				}
 			}
 		}
+
+		resolveCollisions(collisionTuples);
+
 		std::printf("\n");
 	}
 };
