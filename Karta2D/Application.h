@@ -24,6 +24,7 @@ private:
 	void render();
 
 private:
+	bool simulate = false;
 	static Application* instance;
 	const int FRAME_RATE = 60;
 	bool quit;
@@ -34,5 +35,6 @@ private:
 
 	Entity whiteBox;
 	Entity redBox;
-	Entity blackBox;
+	Entity blueBox;
+	Entity leftWall, rightWall, floor, ceiling;
 };
