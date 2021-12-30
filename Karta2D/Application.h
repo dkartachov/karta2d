@@ -1,6 +1,8 @@
 #pragma once
 #include "SimpleECS/SimpleECS.h"
+#include "SimpleECS/EntityManager.h"
 #include "SimpleECS/Components.h"
+#include "Collision2D.h"
 #include "Graphics.h"
 #include "Timer.h"
 
@@ -32,5 +34,5 @@ private:
 
 	Entity parentBox;
 	Entity childBox;
-	Entity childChildBox;
+	Entity childerBox;
 };
