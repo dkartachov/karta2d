@@ -33,5 +33,6 @@ private:
 	Timer* timer;
 
 	Entity whiteBox;
+	Entity redBox;
 	Entity blackBox;
 };
