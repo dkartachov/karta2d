@@ -34,5 +34,4 @@ private:
 
 	Entity parentBox;
 	Entity childBox;
-	Entity childerBox;
 };

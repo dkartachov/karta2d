@@ -23,33 +23,22 @@ Application::Application() {
 	parentBox.setName("Parent");
 	parentBox.AddComponent<Box>();
 	parentBox.AddComponent<BoxCollider2D>();
-	parentBox.GetComponent<BoxCollider2D>()->setSize(100, 100);
-	parentBox.GetComponent<Box>()->setSize(100, 100);
+	parentBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
+	parentBox.GetComponent<Box>()->setSize(50, 50);
 	parentBox.GetComponent<Box>()->fill();
 	parentBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
 
 	childBox.setName("Child");
 	childBox.AddComponent<Box>();
 	childBox.AddComponent<BoxCollider2D>();
-	childBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
-	childBox.GetComponent<Box>()->setSize(50, 50);
+	childBox.GetComponent<BoxCollider2D>()->setSize(50, 600);
+	childBox.GetComponent<Box>()->setSize(50, 600);
 	childBox.GetComponent<Box>()->setColor(0, 0, 0, 255);
 	childBox.GetComponent<Box>()->fill();
-	childBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	childBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 400, Graphics::Instance()->SCREEN_HEIGHT / 2));
 
-	childerBox.setName("Childer");
-	childerBox.AddComponent<Box>();
-	childerBox.AddComponent<BoxCollider2D>();
-	childerBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
-	childerBox.GetComponent<Box>()->setSize(50, 50);
-	childerBox.GetComponent<Box>()->setColor(0, 0, 0, 255);
-	childerBox.GetComponent<Box>()->fill();
-	childerBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2 - 200));
-
-	std::vector<Entity*> entities = { &parentBox, &childBox, &childerBox };
+	std::vector<Entity*> entities = { &parentBox, &childBox };
 	EntityManager::getInstance().addEntities(entities);
-
-	std::printf("%d\n", (int)EntityManager::getInstance().getEntities().size());
 }
 
 Application::~Application() {
@@ -62,18 +51,12 @@ void Application::earlyUpdate() {
 }
 
 void Application::update() {
-	//parentBox.GetComponent<Transform2D>()->rotate(50 * timer->Instance()->getDeltaTime());
-	parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-30, 0));
-	childerBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(0, 30));
+	parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-200, 0));
 
 	EntityManager::getInstance().update();
-
-	//parentBox.update();
-	//childBox.update();
 }
 
 void Application::lateUpdate() {
-	//std::printf("%s\n", Collision2D::AABB(parentBox, childBox) ? "Collision!" : "No Collision.");
 	Collision2D::resolveAABBCollisions();
 }
 
@@ -84,8 +67,6 @@ void Application::render() {
 	////RENDER ENTITIES HERE////
 
 	EntityManager::getInstance().render();
-	//parentBox.render();
-	//childBox.render();
 
 	///////////////////////////
 
