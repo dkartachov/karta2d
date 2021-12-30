@@ -20,25 +20,25 @@ Application::Application() {
 	graphics = Graphics::Instance();
 	timer = Timer::Instance();
 
-	parentBox.setName("Parent");
-	parentBox.AddComponent<Box>();
-	parentBox.AddComponent<BoxCollider2D>();
-	parentBox.AddComponent<Rigidbody2D>();
-	parentBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
-	parentBox.GetComponent<Box>()->setSize(50, 50);
-	parentBox.GetComponent<Box>()->fill();
-	parentBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	whiteBox.setName("White");
+	whiteBox.AddComponent<Box>();
+	whiteBox.AddComponent<BoxCollider2D>();
+	whiteBox.AddComponent<Rigidbody2D>();
+	whiteBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
+	whiteBox.GetComponent<Box>()->setSize(50, 50);
+	whiteBox.GetComponent<Box>()->fill();
+	whiteBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
 
-	childBox.setName("Child");
-	childBox.AddComponent<Box>();
-	childBox.AddComponent<BoxCollider2D>();
-	childBox.GetComponent<BoxCollider2D>()->setSize(50, 600);
-	childBox.GetComponent<Box>()->setSize(50, 600);
-	childBox.GetComponent<Box>()->setColor(0, 0, 0, 255);
-	childBox.GetComponent<Box>()->fill();
-	childBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 400, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	blackBox.setName("Black");
+	blackBox.AddComponent<Box>();
+	blackBox.AddComponent<BoxCollider2D>();
+	blackBox.GetComponent<BoxCollider2D>()->setSize(50, 600);
+	blackBox.GetComponent<Box>()->setSize(50, 600);
+	blackBox.GetComponent<Box>()->setColor(0, 0, 0, 255);
+	blackBox.GetComponent<Box>()->fill();
+	blackBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 400, Graphics::Instance()->SCREEN_HEIGHT / 2));
 
-	std::vector<Entity*> entities = { &parentBox, &childBox };
+	std::vector<Entity*> entities = { &whiteBox, &blackBox };
 	EntityManager::getInstance().addEntities(entities);
 }
 
@@ -53,7 +53,7 @@ void Application::earlyUpdate() {
 
 void Application::update() {
 	//parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-200, 0));
-	parentBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-100, 0));
+	//parentBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-100, 0));
 
 	EntityManager::getInstance().update();
 }
@@ -88,25 +88,25 @@ void Application::run() {
 			if (event.type == SDL_KEYDOWN) {
 				switch (event.key.keysym.sym) {
 				case SDLK_w:
-					parentBox.GetComponent<Transform2D>()->translate(Vector2D(0, -50));
+					whiteBox.GetComponent<Transform2D>()->translate(Vector2D(0, -10));
 					break;
 				case SDLK_s:
-					parentBox.GetComponent<Transform2D>()->translate(Vector2D(0, 50));
+					whiteBox.GetComponent<Transform2D>()->translate(Vector2D(0, 10));
 					break;
 				case SDLK_a:
-					parentBox.GetComponent<Transform2D>()->translate(Vector2D(-50, 0));
+					whiteBox.GetComponent<Transform2D>()->translate(Vector2D(-10, 0));
 					break;
 				case SDLK_d:
-					parentBox.GetComponent<Transform2D>()->translate(Vector2D(50, 0));
+					whiteBox.GetComponent<Transform2D>()->translate(Vector2D(10, 0));
 					break;
 				case SDLK_q:
-					parentBox.GetComponent<Transform2D>()->setRotation(20);
+					whiteBox.GetComponent<Transform2D>()->setRotation(20);
 					break;
 				case SDLK_e:
-					parentBox.GetComponent<Transform2D>()->setRotation(-20);
+					whiteBox.GetComponent<Transform2D>()->setRotation(-20);
 					break;
 				case SDLK_v:
-					parentBox.GetComponent<BoxCollider2D>()->setVisibility(!parentBox.GetComponent<BoxCollider2D>()->isVisible());
+					whiteBox.GetComponent<BoxCollider2D>()->setVisibility(!whiteBox.GetComponent<BoxCollider2D>()->isVisible());
 					break;
 				}
 			}

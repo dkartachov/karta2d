@@ -32,6 +32,6 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity parentBox;
-	Entity childBox;
+	Entity whiteBox;
+	Entity blackBox;
 };
