@@ -164,6 +164,7 @@
     <ClInclude Include="SimpleECS\Components\BoxCollider2D.h" />
     <ClInclude Include="SimpleECS\Components\Circle.h" />
     <ClInclude Include="SimpleECS\Components\Box.h" />
+    <ClInclude Include="SimpleECS\Components\Rigidbody2D.h" />
     <ClInclude Include="SimpleECS\Components\Transform2D.h" />
     <ClInclude Include="SimpleECS\EntityManager.h" />
     <ClInclude Include="SimpleECS\SimpleECS.h" />

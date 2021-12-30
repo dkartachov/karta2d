@@ -23,6 +23,7 @@ Application::Application() {
 	parentBox.setName("Parent");
 	parentBox.AddComponent<Box>();
 	parentBox.AddComponent<BoxCollider2D>();
+	parentBox.AddComponent<Rigidbody2D>();
 	parentBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
 	parentBox.GetComponent<Box>()->setSize(50, 50);
 	parentBox.GetComponent<Box>()->fill();
@@ -51,7 +52,8 @@ void Application::earlyUpdate() {
 }
 
 void Application::update() {
-	parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-200, 0));
+	//parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-200, 0));
+	parentBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-100, 0));
 
 	EntityManager::getInstance().update();
 }
