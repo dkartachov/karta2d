@@ -158,11 +158,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Collision2D.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="SimpleECS\Components.h" />
+    <ClInclude Include="SimpleECS\Components\BoxCollider2D.h" />
     <ClInclude Include="SimpleECS\Components\Circle.h" />
     <ClInclude Include="SimpleECS\Components\Box.h" />
     <ClInclude Include="SimpleECS\Components\Transform2D.h" />
+    <ClInclude Include="SimpleECS\EntityManager.h" />
     <ClInclude Include="SimpleECS\SimpleECS.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Tools\Vector2D.h" />
