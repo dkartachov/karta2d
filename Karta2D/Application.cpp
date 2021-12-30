@@ -44,14 +44,12 @@ Application::Application() {
 	childerBox.GetComponent<Box>()->setSize(50, 50);
 	childerBox.GetComponent<Box>()->setColor(0, 0, 0, 255);
 	childerBox.GetComponent<Box>()->fill();
-	childerBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 200, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	childerBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2 - 200));
 
 	std::vector<Entity*> entities = { &parentBox, &childBox, &childerBox };
 	EntityManager::getInstance().addEntities(entities);
 
 	std::printf("%d\n", (int)EntityManager::getInstance().getEntities().size());
-
-
 }
 
 Application::~Application() {
@@ -66,6 +64,7 @@ void Application::earlyUpdate() {
 void Application::update() {
 	//parentBox.GetComponent<Transform2D>()->rotate(50 * timer->Instance()->getDeltaTime());
 	parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(-30, 0));
+	childerBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(0, 30));
 
 	EntityManager::getInstance().update();
 
