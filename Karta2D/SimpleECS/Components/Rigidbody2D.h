@@ -6,6 +6,7 @@
 class Rigidbody2D : public Component {
 public:
 	Rigidbody2D() {
+		mass = 1;
 		transform = nullptr;
 		velocity = zeroVector;
 	}
@@ -18,8 +19,20 @@ public:
 		transform = entity->GetComponent<Transform2D>();
 	}
 
+	void setMass(float mass) {
+		this->mass = mass;
+	}
+
+	float getMass() const {
+		return mass;
+	}
+
 	void setVelocity(Vector2D velocity) {
 		this->velocity = velocity;
+	}
+
+	Vector2D getVelocity() const {
+		return velocity;
 	}
 
 	void update() override {
@@ -35,6 +48,7 @@ public:
 	}
 
 private:
+	float mass;
 	Transform2D* transform;
 	Vector2D velocity;
 };
