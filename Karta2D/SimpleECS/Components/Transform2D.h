@@ -65,6 +65,19 @@ public:
 
 	// Set rotation (deg) to a specific angle (measured counter-clockwise)
 	void setRotation(float angle) {
+		if (entity->hasChildren()) {
+			for (auto& child : entity->getChildren()) {
+				child->GetComponent<Transform2D>()->setRotation(angle);
+
+				Vector2D childPos = child->GetComponent<Transform2D>()->getPosition();
+				childPos = childPos - position;
+				childPos.rotateVector(angle);
+				childPos = childPos + position;
+
+				child->GetComponent<Transform2D>()->setPosition(childPos);
+			}
+		}
+
 		this->rotation = -angle * DEG_TO_RAD;
 	}
 

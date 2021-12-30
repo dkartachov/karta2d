@@ -53,7 +53,7 @@ void Application::earlyUpdate() {
 }
 
 void Application::update() {
-	parentBox.GetComponent<Transform2D>()->rotate(25 * timer->Instance()->getDeltaTime());
+	//parentBox.GetComponent<Transform2D>()->rotate(25 * timer->Instance()->getDeltaTime());
 	parentBox.GetComponent<Transform2D>()->translate(timer->Instance()->getDeltaTime() * Vector2D(50, 0));
 
 	parentBox.update();
@@ -93,13 +93,10 @@ void Application::run() {
 			if (event.type == SDL_KEYDOWN) {
 				switch (event.key.keysym.sym) {
 				case SDLK_q:
-					parentBox.GetComponent<Transform2D>()->setScale({ 1, 1 });
-					break;
-				case SDLK_w:
-					parentBox.GetComponent<Transform2D>()->setScale({ 1.2, 1.2 });
+					parentBox.GetComponent<Transform2D>()->setRotation(20);
 					break;
 				case SDLK_e:
-					parentBox.GetComponent<Transform2D>()->setScale({ 0.5, 0.5 });
+					parentBox.GetComponent<Transform2D>()->setRotation(-20);
 					break;
 				case SDLK_1:
 					parentBox.addChildren({ &childBox });
