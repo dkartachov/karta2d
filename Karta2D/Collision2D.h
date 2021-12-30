@@ -65,20 +65,30 @@ public:
 	}
 
 	static void resolveCollision(Entity& thisEntity, Entity& entity, Vector2D collisionNormal) {
-		Vector2D thisEntityVel = thisEntity.GetComponent<Rigidbody2D>()->getVelocity();
-		Vector2D entityVel = entity.GetComponent<Rigidbody2D>()->getVelocity();
+		bool thisEntityHasRb = thisEntity.HasComponent<Rigidbody2D>();
+		bool entityHasRb = entity.HasComponent<Rigidbody2D>();
 
+		Vector2D thisEntityVel = thisEntityHasRb ? thisEntity.GetComponent<Rigidbody2D>()->getVelocity() : zeroVector;
+		Vector2D entityVel = entityHasRb ? entity.GetComponent<Rigidbody2D>()->getVelocity() : zeroVector;
+		
 		Vector2D relVelocity = thisEntityVel - entityVel;
 		float velAlongNormal = Vector2D::dot(relVelocity, collisionNormal);
 
 		float restitution = 1;
 		float j = -(1 + restitution) * velAlongNormal;
-		j /= 1 / thisEntity.GetComponent<Rigidbody2D>()->getMass() + 1 / entity.GetComponent<Rigidbody2D>()->getMass();
+
+		float thisEntityInvMass = thisEntityHasRb ? 1 / thisEntity.GetComponent<Rigidbody2D>()->getMass() : 0;
+		float entityInvMass = entityHasRb ? 1 / entity.GetComponent<Rigidbody2D>()->getMass() : 0;
+
+		j /= thisEntityInvMass + entityInvMass;
 
 		Vector2D impulse = j * collisionNormal;
 
-		thisEntity.GetComponent<Rigidbody2D>()->setVelocity(thisEntityVel + (1 / thisEntity.GetComponent<Rigidbody2D>()->getMass()) * impulse);
-		entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - (1 / entity.GetComponent<Rigidbody2D>()->getMass()) * impulse);
+		if (thisEntityHasRb)
+			thisEntity.GetComponent<Rigidbody2D>()->setVelocity(thisEntityVel + thisEntityInvMass * impulse);
+
+		if (entityHasRb)
+			entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - entityInvMass * impulse);
 	}
 
 	static void resolveCollisions(std::vector<std::tuple<Entity*, Entity*, Vector2D>>& collisionTuples) {
