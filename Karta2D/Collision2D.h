@@ -23,6 +23,24 @@ public:
 		return false;
 	}
 
+	static bool CircleCircle(Entity& thisEntity, Entity& entity) {
+		Vector2D thisEntityPos = thisEntity.GetComponent<Transform2D>()->getPosition();
+		float thisEntityRadius = thisEntity.GetComponent<CircleCollider2D>()->getRadius();
+
+		Vector2D entityPos = entity.GetComponent<Transform2D>()->getPosition();
+		float entityRadius = entity.GetComponent<CircleCollider2D>()->getRadius();
+
+		Vector2D relPos = thisEntityPos - entityPos;
+		float radii = thisEntityRadius + entityRadius;
+
+		if (relPos.MagnitudeSquared() < radii * radii) {
+			std::printf("Collision detected between '%s' and '%s'\n", thisEntity.getName().c_str(), entity.getName().c_str());
+			return true;
+		}
+
+		return false;
+	}
+
 	static Vector2D getNormal(Entity& thisEntity, Entity& entity) {
 		Vector2D thisEntityPos = thisEntity.GetComponent<Transform2D>()->getPosition();
 		Vector2D thisEntityBox = thisEntity.GetComponent<BoxCollider2D>()->getSize();
@@ -107,6 +125,10 @@ public:
 
 		for (auto& thisEntity : entities) {
 			for (auto& entity : entities) {
+				if (!thisEntity->HasComponent<BoxCollider2D>() || !entity->HasComponent<BoxCollider2D>()) {
+					continue;
+				}
+
 				if (thisEntity->getId() != entity->getId()) {
 					if (AABB(*thisEntity, *entity)) {
 						Vector2D collisionNormal = getNormal(*thisEntity, *entity);
