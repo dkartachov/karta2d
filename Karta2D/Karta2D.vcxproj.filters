@@ -68,5 +68,8 @@
     <ClInclude Include="SimpleECS\Components\Rigidbody2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleECS\Components\CircleCollider2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
