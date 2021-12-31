@@ -24,24 +24,24 @@ Application::Application() {
 	whiteBox.AddComponent<Box>();
 	whiteBox.AddComponent<BoxCollider2D>();
 	whiteBox.AddComponent<Rigidbody2D>();
-	whiteBox.GetComponent<BoxCollider2D>()->setSize(400, 30);
-	whiteBox.GetComponent<Box>()->setSize(400, 30);
+	whiteBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
+	whiteBox.GetComponent<Box>()->setSize(50, 50);
 	whiteBox.GetComponent<Box>()->fill();
 	whiteBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 - 100));
-	whiteBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(0, -200));
+	whiteBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-180, 150));
 	whiteBox.GetComponent<Rigidbody2D>()->setMass(50);
 
 	redBox.setName("Red Box");
 	redBox.AddComponent<Box>();
 	redBox.AddComponent<BoxCollider2D>();
 	redBox.AddComponent<Rigidbody2D>();
-	redBox.GetComponent<BoxCollider2D>()->setSize(400, 30);
-	redBox.GetComponent<Box>()->setSize(400, 30);
+	redBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
+	redBox.GetComponent<Box>()->setSize(50, 50);
 	redBox.GetComponent<Box>()->setColor(255, 0, 0, 255);
 	redBox.GetComponent<Box>()->fill();
 	redBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
-	redBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(0, 0));
-	redBox.GetComponent<Rigidbody2D>()->setMass(25);
+	redBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-150, 0));
+	redBox.GetComponent<Rigidbody2D>()->setMass(50);
 
 	blueBox.setName("Blue Box");
 	blueBox.AddComponent<Box>();
@@ -58,11 +58,14 @@ Application::Application() {
 	leftWall.setName("Left Wall");
 	leftWall.AddComponent<Box>();
 	leftWall.AddComponent<BoxCollider2D>();
+	leftWall.AddComponent<Rigidbody2D>();
 	leftWall.GetComponent<BoxCollider2D>()->setSize(50, 800);
 	leftWall.GetComponent<Box>()->setSize(50, 800);
 	leftWall.GetComponent<Box>()->setColor(0, 0, 0, 255);
 	leftWall.GetComponent<Box>()->fill();
-	leftWall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	leftWall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 400, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	leftWall.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(100, 0));
+	leftWall.GetComponent<Rigidbody2D>()->setMass(100);
 
 	rightWall.setName("Right Wall");
 	rightWall.AddComponent<Box>();
@@ -91,7 +94,7 @@ Application::Application() {
 	floor.GetComponent<Box>()->fill();
 	floor.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 200));
 
-	std::vector<Entity*> entities = { &whiteBox, &redBox, &blueBox, &leftWall, &rightWall, &ceiling, &floor };
+	std::vector<Entity*> entities = { &whiteBox, &redBox, &leftWall };
 	EntityManager::getInstance().addEntities(entities);
 }
 
