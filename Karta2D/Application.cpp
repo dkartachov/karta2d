@@ -59,12 +59,12 @@ Application::Application() {
 	leftWall.AddComponent<Box>();
 	leftWall.AddComponent<BoxCollider2D>();
 	leftWall.AddComponent<Rigidbody2D>();
-	leftWall.GetComponent<BoxCollider2D>()->setSize(50, 800);
-	leftWall.GetComponent<Box>()->setSize(50, 800);
+	leftWall.GetComponent<BoxCollider2D>()->setSize(50, 400);
+	leftWall.GetComponent<Box>()->setSize(50, 400);
 	leftWall.GetComponent<Box>()->setColor(0, 0, 0, 255);
 	leftWall.GetComponent<Box>()->fill();
 	leftWall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 400, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	leftWall.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(100, 0));
+	leftWall.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(100, -50));
 	leftWall.GetComponent<Rigidbody2D>()->setMass(100);
 
 	rightWall.setName("Right Wall");
