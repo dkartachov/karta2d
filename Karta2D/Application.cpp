@@ -20,81 +20,19 @@ Application::Application() {
 	graphics = Graphics::Instance();
 	timer = Timer::Instance();
 
-	whiteBox.setName("White Box");
-	whiteBox.AddComponent<Box>();
-	whiteBox.AddComponent<BoxCollider2D>();
-	whiteBox.AddComponent<Rigidbody2D>();
-	whiteBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
-	whiteBox.GetComponent<Box>()->setSize(50, 50);
-	whiteBox.GetComponent<Box>()->fill();
-	whiteBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 - 100));
-	whiteBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-180, 150));
-	whiteBox.GetComponent<Rigidbody2D>()->setMass(50);
+	smolCircle.setName("Smol Circle");
+	smolCircle.AddComponent<CircleCollider2D>();
+	smolCircle.AddComponent<Rigidbody2D>();
+	smolCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 100, Graphics::Instance()->SCREEN_HEIGHT / 2 + 50));
+	smolCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(50, 0));
 
-	redBox.setName("Red Box");
-	redBox.AddComponent<Box>();
-	redBox.AddComponent<BoxCollider2D>();
-	redBox.AddComponent<Rigidbody2D>();
-	redBox.GetComponent<BoxCollider2D>()->setSize(50, 50);
-	redBox.GetComponent<Box>()->setSize(50, 50);
-	redBox.GetComponent<Box>()->setColor(255, 0, 0, 255);
-	redBox.GetComponent<Box>()->fill();
-	redBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
-	redBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-150, 0));
-	redBox.GetComponent<Rigidbody2D>()->setMass(50);
+	beegCircle.setName("Beeg Circle");
+	beegCircle.AddComponent<CircleCollider2D>();
+	beegCircle.AddComponent<Rigidbody2D>();
+	beegCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 100, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	beegCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-50, 0));
 
-	blueBox.setName("Blue Box");
-	blueBox.AddComponent<Box>();
-	blueBox.AddComponent<BoxCollider2D>();
-	blueBox.AddComponent<Rigidbody2D>();
-	blueBox.GetComponent<BoxCollider2D>()->setSize(400, 30);
-	blueBox.GetComponent<Box>()->setSize(400, 30);
-	blueBox.GetComponent<Box>()->setColor(0, 0, 255, 255);
-	blueBox.GetComponent<Box>()->fill();
-	blueBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	blueBox.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(0, 200));
-	blueBox.GetComponent<Rigidbody2D>()->setMass(50);
-
-	leftWall.setName("Left Wall");
-	leftWall.AddComponent<Box>();
-	leftWall.AddComponent<BoxCollider2D>();
-	leftWall.AddComponent<Rigidbody2D>();
-	leftWall.GetComponent<BoxCollider2D>()->setSize(50, 400);
-	leftWall.GetComponent<Box>()->setSize(50, 400);
-	leftWall.GetComponent<Box>()->setColor(0, 0, 0, 255);
-	leftWall.GetComponent<Box>()->fill();
-	leftWall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 400, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	leftWall.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(100, -50));
-	leftWall.GetComponent<Rigidbody2D>()->setMass(100);
-
-	rightWall.setName("Right Wall");
-	rightWall.AddComponent<Box>();
-	rightWall.AddComponent<BoxCollider2D>();
-	rightWall.GetComponent<BoxCollider2D>()->setSize(50, 800);
-	rightWall.GetComponent<Box>()->setSize(50, 800);
-	rightWall.GetComponent<Box>()->setColor(0, 0, 0, 255);
-	rightWall.GetComponent<Box>()->fill();
-	rightWall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 200, Graphics::Instance()->SCREEN_HEIGHT / 2));
-
-	ceiling.setName("Ceiling");
-	ceiling.AddComponent<Box>();
-	ceiling.AddComponent<BoxCollider2D>();
-	ceiling.GetComponent<BoxCollider2D>()->setSize(800, 50);
-	ceiling.GetComponent<Box>()->setSize(800, 50);
-	ceiling.GetComponent<Box>()->setColor(0, 0, 0, 255);
-	ceiling.GetComponent<Box>()->fill();
-	ceiling.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 - 200));
-
-	floor.setName("Floor");
-	floor.AddComponent<Box>();
-	floor.AddComponent<BoxCollider2D>();
-	floor.GetComponent<BoxCollider2D>()->setSize(800, 50);
-	floor.GetComponent<Box>()->setSize(800, 50);
-	floor.GetComponent<Box>()->setColor(0, 0, 0, 255);
-	floor.GetComponent<Box>()->fill();
-	floor.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 200));
-
-	std::vector<Entity*> entities = { &whiteBox, &redBox, &leftWall };
+	std::vector<Entity*> entities = { &smolCircle, &beegCircle};
 	EntityManager::getInstance().addEntities(entities);
 }
 
@@ -113,7 +51,8 @@ void Application::update() {
 }
 
 void Application::lateUpdate() {
-	Collision2D::resolveAABBCollisions();
+	//Collision2D::resolveAABBCollisions();
+	Collision2D::CircleCircle(beegCircle, smolCircle);
 }
 
 void Application::render() {

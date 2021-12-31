@@ -1,4 +1,5 @@
 #pragma once
+#include "SimpleECS/SimpleECS.h"
 #include "Graphics.h"
 #include "Transform2D.h"
 
@@ -35,11 +36,11 @@ public:
 	}
 
 	void update() override {
-		position = transform->getPosition();
+
 	}
 
 	void render() override {
-		Graphics::Instance()->drawCircle(position, radius, thickness, outlineColor, filled, fillColor);
+		Graphics::Instance()->drawCircle(transform->getPosition(), radius, thickness, outlineColor, filled, fillColor);
 	}
 
 	void toString() override {
@@ -52,5 +53,4 @@ private:
 	bool filled;
 	SDL_Color outlineColor, fillColor;
 	Transform2D* transform;
-	Vector2D position;
 };
