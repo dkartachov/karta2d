@@ -17,6 +17,7 @@ public:
 			thisEntityPos.y + 0.5 * thisEntityBox.y > entityPos.y - 0.5 * entityBox.y &&
 			thisEntityPos.y - 0.5 * thisEntityBox.y < entityPos.y + 0.5 * entityBox.y) {
 
+			std::printf("Collision detected between '%s' and '%s'\n", thisEntity.getName().c_str(), entity.getName().c_str());
 			return true;
 		}
 
@@ -114,7 +115,7 @@ public:
 			entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - entityInvMass * impulse);
 	}
 
-	static void resolveCollisions(std::vector<std::tuple<Entity*, Entity*, Vector2D>>& collisionTuples) {
+	static void resolveCollisionTuples(std::vector<std::tuple<Entity*, Entity*, Vector2D>>& collisionTuples) {
 		for (auto& colTuple : collisionTuples) {
 			Entity* entA = std::get<0>(colTuple);
 			Entity* entB = std::get<1>(colTuple);
@@ -124,17 +125,19 @@ public:
 		}
 	}
 
-	static void resolveAABBCollisions() {
+	static void resolveCollisions() {
 		std::vector<Entity*>& entities = EntityManager::getInstance().getEntities();
 		std::vector<std::tuple<Entity*, Entity*, Vector2D>> collisionTuples;
 
 		for (auto& thisEntity : entities) {
-			for (auto& entity : entities) {
-				if (!thisEntity->HasComponent<BoxCollider2D>() || !entity->HasComponent<BoxCollider2D>()) {
-					continue;
-				}
+			if (!thisEntity->HasComponent<BoxCollider2D>() && !thisEntity->HasComponent<CircleCollider2D>()) continue;
 
-				if (thisEntity->getId() != entity->getId()) {
+			for (auto& entity : entities) {
+				if (!entity->HasComponent<BoxCollider2D>() && !entity->HasComponent<CircleCollider2D>()) continue;
+
+				if (thisEntity->getId() == entity->getId()) continue;
+
+				if (thisEntity->HasComponent<BoxCollider2D>() && entity->HasComponent<BoxCollider2D>()) {
 					if (AABB(*thisEntity, *entity)) {
 						Vector2D collisionNormal = getNormal(*thisEntity, *entity);
 
@@ -146,7 +149,7 @@ public:
 							bool foundSecond = entB->getId() == thisEntity->getId() || entB->getId() == entity->getId();
 
 							return foundFirst && foundSecond;
-						});
+							});
 
 						if (it != collisionTuples.end()) {
 							continue;
@@ -157,32 +160,22 @@ public:
 						//std::printf("Normal for Entity '%s' is (%d, %d)\n", thisEntity->getName().c_str(), (int)collisionNormal.x, (int)collisionNormal.y);
 						//std::printf("Collision detected between entities %d and %d\n", thisEntity->getId(), entity->getId());
 					}
+
+					continue;
 				}
+
+				if (thisEntity->HasComponent<CircleCollider2D>() && entity->HasComponent<CircleCollider2D>()) {
+					if (CircleCircle(*thisEntity, *entity)) {
+						Vector2D collisionNormal = getCircleCircleNormal(*thisEntity, *entity);
+
+						resolveCollision(*thisEntity, *entity, collisionNormal);
+						return;
+					}
+				}
+				
 			}
 		}
 
-		resolveCollisions(collisionTuples);
-
-		std::printf("\n");
-	}
-
-	static void resolveCircleCircleCollisions() {
-		std::vector<Entity*>& entities = EntityManager::getInstance().getEntities();
-
-		for (auto& thisEntity : entities) {
-			if (!thisEntity->HasComponent<CircleCollider2D>()) continue;
-
-			for (auto& entity : entities) {
-				if (thisEntity->getId() == entity->getId()) continue;
-				if (!entity->HasComponent<CircleCollider2D>()) continue;
-
-				if (CircleCircle(*thisEntity, *entity)) {
-					Vector2D collisionNormal = getCircleCircleNormal(*thisEntity, *entity);
-
-					resolveCollision(*thisEntity, *entity, collisionNormal);
-					return;
-				}
-			}
-		}
+		resolveCollisionTuples(collisionTuples);
 	}
 };

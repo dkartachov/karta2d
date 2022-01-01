@@ -34,8 +34,5 @@ private:
 	Timer* timer;
 
 	Entity smolCircle, beegCircle;
-	Entity whiteBox;
-	Entity redBox;
-	Entity blueBox;
-	Entity leftWall, rightWall, floor, ceiling;
+	Entity whiteBox, redBox;
 };
