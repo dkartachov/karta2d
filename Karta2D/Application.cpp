@@ -23,14 +23,17 @@ Application::Application() {
 	smolCircle.setName("Smol Circle");
 	smolCircle.AddComponent<CircleCollider2D>();
 	smolCircle.AddComponent<Rigidbody2D>();
-	smolCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 100, Graphics::Instance()->SCREEN_HEIGHT / 2 + 50));
-	smolCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(50, 0));
+	smolCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 100, Graphics::Instance()->SCREEN_HEIGHT / 2 + 70));
+	smolCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(100, 0));
+	smolCircle.GetComponent<CircleCollider2D>()->setRadius(25);
+	smolCircle.GetComponent<Rigidbody2D>()->setMass(1);
 
 	beegCircle.setName("Beeg Circle");
 	beegCircle.AddComponent<CircleCollider2D>();
 	beegCircle.AddComponent<Rigidbody2D>();
 	beegCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 100, Graphics::Instance()->SCREEN_HEIGHT / 2));
 	beegCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-50, 0));
+	beegCircle.GetComponent<Rigidbody2D>()->setMass(2);
 
 	std::vector<Entity*> entities = { &smolCircle, &beegCircle};
 	EntityManager::getInstance().addEntities(entities);
@@ -52,7 +55,8 @@ void Application::update() {
 
 void Application::lateUpdate() {
 	//Collision2D::resolveAABBCollisions();
-	Collision2D::CircleCircle(beegCircle, smolCircle);
+	//Collision2D::CircleCircle(beegCircle, smolCircle);
+	Collision2D::resolveCircleCircleCollisions();
 }
 
 void Application::render() {

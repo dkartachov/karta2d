@@ -29,6 +29,10 @@ struct Vector2D {
 		return (a.x * b.x + a.y * b.y);
 	}
 
+	Vector2D normalize() {
+		return Vector2D(x / Magnitude(), y / Magnitude());
+	}
+
 	// Rotate vector by an angle in degrees (counter-clockwise positive)
 	inline void rotateVector(float angle) {
 		angle = angle * DEG_TO_RAD;

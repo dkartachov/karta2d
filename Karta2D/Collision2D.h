@@ -82,6 +82,11 @@ public:
 		}
 	}
 
+	static Vector2D getCircleCircleNormal(Entity& entA, Entity& entB) {
+		Vector2D normal = (entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition()).normalize();
+		return normal;
+	}
+
 	static void resolveCollision(Entity& thisEntity, Entity& entity, Vector2D collisionNormal) {
 		bool thisEntityHasRb = thisEntity.HasComponent<Rigidbody2D>();
 		bool entityHasRb = entity.HasComponent<Rigidbody2D>();
@@ -159,5 +164,25 @@ public:
 		resolveCollisions(collisionTuples);
 
 		std::printf("\n");
+	}
+
+	static void resolveCircleCircleCollisions() {
+		std::vector<Entity*>& entities = EntityManager::getInstance().getEntities();
+
+		for (auto& thisEntity : entities) {
+			if (!thisEntity->HasComponent<CircleCollider2D>()) continue;
+
+			for (auto& entity : entities) {
+				if (thisEntity->getId() == entity->getId()) continue;
+				if (!entity->HasComponent<CircleCollider2D>()) continue;
+
+				if (CircleCircle(*thisEntity, *entity)) {
+					Vector2D collisionNormal = getCircleCircleNormal(*thisEntity, *entity);
+
+					resolveCollision(*thisEntity, *entity, collisionNormal);
+					return;
+				}
+			}
+		}
 	}
 };
