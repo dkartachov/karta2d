@@ -33,6 +33,7 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
+	Entity smolCircle, beegCircle;
 	Entity whiteBox;
 	Entity redBox;
 	Entity blueBox;
