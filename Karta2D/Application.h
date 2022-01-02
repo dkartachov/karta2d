@@ -33,6 +33,8 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity smolCircle, beegCircle;
-	Entity whiteBox, redBox;
+	Entity box;
+	Entity bigBox;
+	Entity ground, ceiling;
+	Entity wall;
 };

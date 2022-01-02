@@ -20,36 +20,55 @@ Application::Application() {
 	graphics = Graphics::Instance();
 	timer = Timer::Instance();
 
-	smolCircle.setName("Smol Circle");
-	smolCircle.AddComponent<CircleCollider2D>();
-	smolCircle.AddComponent<Rigidbody2D>();
-	smolCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 100, Graphics::Instance()->SCREEN_HEIGHT / 2 + 70));
-	smolCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(150, 0));
-	smolCircle.GetComponent<CircleCollider2D>()->setRadius(25);
-	smolCircle.GetComponent<Rigidbody2D>()->setMass(1);
+	box.setName("Box");
+	box.AddComponent<BoxCollider2D>();
+	box.AddComponent<Box>();
+	box.GetComponent<Box>()->setSize(30, 30);
+	box.GetComponent<Box>()->fill();
+	box.GetComponent<Box>()->setColor(255, 0, 0, 255);
+	box.AddComponent<Rigidbody2D>();
+	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
+	box.GetComponent<BoxCollider2D>()->setSize(30, 30);
+	box.GetComponent<Rigidbody2D>()->setMass(1);
+	box.GetComponent<Rigidbody2D>()->setVelocity({ 50, -150 });
 
-	beegCircle.setName("Beeg Circle");
-	beegCircle.AddComponent<CircleCollider2D>();
-	beegCircle.AddComponent<Rigidbody2D>();
-	beegCircle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 100, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	beegCircle.GetComponent<Rigidbody2D>()->setVelocity(Vector2D(-50, 0));
-	beegCircle.GetComponent<Rigidbody2D>()->setMass(2);
+	bigBox.setName("Big Box");
+	bigBox.AddComponent<BoxCollider2D>();
+	bigBox.AddComponent<Box>();
+	bigBox.GetComponent<Box>()->setSize(50, 60);
+	bigBox.GetComponent<Box>()->fill();
+	bigBox.GetComponent<Box>()->setColor(0, 0, 255, 255);
+	bigBox.AddComponent<Rigidbody2D>();
+	bigBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 150));
+	bigBox.GetComponent<BoxCollider2D>()->setSize(50, 60);
+	bigBox.GetComponent<Rigidbody2D>()->setMass(2);
+	bigBox.GetComponent<Rigidbody2D>()->setVelocity({ -100, -130 });
 
-	whiteBox.setName("White Box");
-	whiteBox.AddComponent<BoxCollider2D>();
-	whiteBox.AddComponent<Rigidbody2D>();
-	whiteBox.GetComponent<Transform2D>()->setPosition({ 100, 200 });
-	whiteBox.GetComponent<Rigidbody2D>()->setVelocity({ 20, 200 });
+	ground.setName("Ground");
+	ground.AddComponent<BoxCollider2D>();
+	ground.AddComponent<Box>();
+	ground.GetComponent<Box>()->setSize(1600, 50);
+	ground.GetComponent<Box>()->fill();
+	ground.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 300));
+	ground.GetComponent<BoxCollider2D>()->setSize(1600, 50);
 
-	redBox.setName("White Box");
-	redBox.AddComponent<BoxCollider2D>();
-	redBox.GetComponent<BoxCollider2D>()->setSize(100, 100);
-	redBox.AddComponent<Rigidbody2D>();
-	redBox.GetComponent<Transform2D>()->setPosition({ 100, 600});
-	redBox.GetComponent<Rigidbody2D>()->setVelocity({ 0, -50 });
-	redBox.GetComponent<Rigidbody2D>()->setMass(2);
+	ceiling.setName("Ceiling");
+	ceiling.AddComponent<BoxCollider2D>();
+	ceiling.AddComponent<Box>();
+	ceiling.GetComponent<Box>()->setSize(1600, 50);
+	ceiling.GetComponent<Box>()->fill();
+	ceiling.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
+	ceiling.GetComponent<BoxCollider2D>()->setSize(1600, 50);
 
-	std::vector<Entity*> entities = { &smolCircle, &beegCircle, &whiteBox, &redBox };
+	wall.setName("Wall");
+	wall.AddComponent<BoxCollider2D>();
+	wall.AddComponent<Box>();
+	wall.GetComponent<Box>()->setSize(600, 350);
+	wall.GetComponent<Box>()->fill();
+	wall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 600, Graphics::Instance()->SCREEN_HEIGHT / 2 + 150));
+	wall.GetComponent<BoxCollider2D>()->setSize(600, 350);
+
+	std::vector<Entity*> entities = { &ground, &ceiling, &box, &bigBox, &wall };
 	EntityManager::getInstance().addEntities(entities);
 }
 
