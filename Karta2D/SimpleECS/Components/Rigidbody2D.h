@@ -6,6 +6,7 @@
 class Rigidbody2D : public Component {
 public:
 	Rigidbody2D() {
+		gravity = true;
 		mass = 1;
 		transform = nullptr;
 		velocity = zeroVector;
@@ -35,8 +36,23 @@ public:
 		return velocity;
 	}
 
+	void setGravity(bool state) {
+		gravity = state;
+	}
+
+	bool hasGravity() const {
+		return gravity;
+	}
+
 	void update() override {
-		transform->translate(Timer::Instance()->getDeltaTime() * velocity);
+		float deltaT = Timer::Instance()->getDeltaTime();
+
+		if (gravity) {
+			float deltaY = velocity.y * deltaT + 0.5 * g * deltaT * deltaT;
+			velocity.y += g * deltaT;
+		}
+
+		transform->translate({ velocity.x * deltaT, velocity.y * deltaT });
 	}	
 
 	void render() override {
@@ -48,6 +64,8 @@ public:
 	}
 
 private:
+	const float g = 150;
+	bool gravity;
 	float mass;
 	Transform2D* transform;
 	Vector2D velocity;
