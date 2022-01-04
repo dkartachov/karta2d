@@ -67,5 +67,9 @@ inline Vector2D operator* (const Vector2D& v, const float& c) {
 	return operator*(c, v);
 }
 
+inline Vector2D operator/ (const Vector2D& v, const float& c) {
+	return Vector2D(v.x / c, v.y / c);
+}
+
 const Vector2D zeroVector = { 0.0, 0.0 };
 const Vector2D oneVector = { 1.0, 1.0 };
