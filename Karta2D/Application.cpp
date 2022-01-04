@@ -30,7 +30,7 @@ Application::Application() {
 	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
 	box.GetComponent<BoxCollider2D>()->setSize(30, 30);
 	box.GetComponent<Rigidbody2D>()->setMass(1);
-	box.GetComponent<Rigidbody2D>()->setVelocity({ 50, -150 });
+	box.GetComponent<Rigidbody2D>()->setVelocity({ 150, -200 });
 
 	bigBox.setName("Big Box");
 	bigBox.AddComponent<BoxCollider2D>();
@@ -39,10 +39,11 @@ Application::Application() {
 	bigBox.GetComponent<Box>()->fill();
 	bigBox.GetComponent<Box>()->setColor(0, 0, 255, 255);
 	bigBox.AddComponent<Rigidbody2D>();
-	bigBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 150));
+	bigBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
 	bigBox.GetComponent<BoxCollider2D>()->setSize(50, 60);
-	bigBox.GetComponent<Rigidbody2D>()->setMass(2);
-	bigBox.GetComponent<Rigidbody2D>()->setVelocity({ -100, -130 });
+	bigBox.GetComponent<Rigidbody2D>()->setMass(1);
+	bigBox.GetComponent<Rigidbody2D>()->setVelocity({ -150, -200 });
+	bigBox.GetComponent<Rigidbody2D>()->addForce({ 0, 0 });
 
 	ground.setName("Ground");
 	ground.AddComponent<BoxCollider2D>();
@@ -52,23 +53,8 @@ Application::Application() {
 	ground.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 300));
 	ground.GetComponent<BoxCollider2D>()->setSize(1600, 50);
 
-	ceiling.setName("Ceiling");
-	ceiling.AddComponent<BoxCollider2D>();
-	ceiling.AddComponent<Box>();
-	ceiling.GetComponent<Box>()->setSize(1600, 50);
-	ceiling.GetComponent<Box>()->fill();
-	ceiling.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2));
-	ceiling.GetComponent<BoxCollider2D>()->setSize(1600, 50);
 
-	wall.setName("Wall");
-	wall.AddComponent<BoxCollider2D>();
-	wall.AddComponent<Box>();
-	wall.GetComponent<Box>()->setSize(600, 350);
-	wall.GetComponent<Box>()->fill();
-	wall.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 600, Graphics::Instance()->SCREEN_HEIGHT / 2 + 150));
-	wall.GetComponent<BoxCollider2D>()->setSize(600, 350);
-
-	std::vector<Entity*> entities = { &ground, &ceiling, &box, &bigBox, &wall };
+	std::vector<Entity*> entities = { &ground, &box, &bigBox };
 	EntityManager::getInstance().addEntities(entities);
 }
 
@@ -87,6 +73,7 @@ void Application::update() {
 }
 
 void Application::lateUpdate() {
+	if (!simulate) return;
 	Collision2D::resolveCollisions();
 }
 
