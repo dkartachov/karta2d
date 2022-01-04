@@ -15,7 +15,6 @@ public:
 
 	void update();
 	void reset();
-	
 private:
 	static Timer* instance;
 	unsigned int startTicks, elapsedTicks;
