@@ -10,6 +10,7 @@ public:
 		mass = 1;
 		transform = nullptr;
 		velocity = zeroVector;
+		acceleration = zeroVector;
 	}
 
 	void init() override {
@@ -36,6 +37,19 @@ public:
 		return velocity;
 	}
 
+	void setAcceleration(Vector2D acceleration) {
+		this->acceleration = acceleration;
+	}
+
+	Vector2D getAcceleration() const {
+		return acceleration;
+	}
+
+	// Add a constant force to the body.
+	void addForce(Vector2D force) {
+		acceleration = force / mass;
+	}
+
 	void setGravity(bool state) {
 		gravity = state;
 	}
@@ -47,13 +61,14 @@ public:
 	void update() override {
 		float deltaT = Timer::Instance()->getDeltaTime();
 
-		if (gravity) {
-			float deltaY = velocity.y * deltaT + 0.5 * g * deltaT * deltaT;
-			velocity.y += g * deltaT;
-		}
+		float deltaX = velocity.x * deltaT + 0.5 * acceleration.x * deltaT * deltaT;
+		velocity.x += acceleration.x * deltaT;
+
+		float deltaY = velocity.y * deltaT + 0.5 * ((double)acceleration.y + (gravity ? g : 0)) * deltaT * deltaT;
+		velocity.y += (acceleration.y + (gravity ? g : 0)) * deltaT;
 
 		transform->translate({ velocity.x * deltaT, velocity.y * deltaT });
-	}	
+	}
 
 	void render() override {
 
@@ -69,4 +84,5 @@ private:
 	float mass;
 	Transform2D* transform;
 	Vector2D velocity;
+	Vector2D acceleration;
 };
