@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+//#include <SDL_image.h>
+//#include <SDL_ttf.h>
 #include <string>
 #include "Vector2D.h"
 #include "Transform2D.h"
@@ -15,7 +15,7 @@ public:
 	bool init();
 
 	SDL_Texture* loadTexture(std::string path);
-	SDL_Texture* createText(TTF_Font* font, std::string text, SDL_Color color);
+	//SDL_Texture* createText(TTF_Font* font, std::string text, SDL_Color color);
 
 	void drawBox(Transform2D transform, Vector2D size, bool fill = false, SDL_Color color = { 0, 0, 0, 255 });
 	void drawCircle(Vector2D position, int radius, int thickness, SDL_Color outlineColor = { 255, 255, 255, 255 }, bool filled = false, SDL_Color fillColor = { 255, 255, 255, 255 });

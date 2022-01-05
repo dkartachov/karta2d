@@ -35,49 +35,49 @@ bool Graphics::init() {
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-	int flags = IMG_INIT_PNG;
-	if (!(IMG_Init(flags) & flags)) {
-		printf("Image initialization error: %s\n", IMG_GetError());
-		return false;
-	}
+	// int flags = IMG_INIT_PNG;
+	// if (!(IMG_Init(flags) & flags)) {
+	// 	printf("Image initialization error: %s\n", IMG_GetError());
+	// 	return false;
+	// }
 
-	if (TTF_Init() == -1) {
-		printf("TTF initilization error: %s\n", TTF_GetError());
-		return false;
-	}
+	// if (TTF_Init() == -1) {
+	// 	printf("TTF initilization error: %s\n", TTF_GetError());
+	// 	return false;
+	// }
 
 	return true;
 }
 
-SDL_Texture* Graphics::loadTexture(std::string path) {
+//SDL_Texture* Graphics::loadTexture(std::string path) {
+//
+//	SDL_Surface* surface = IMG_Load(path.c_str());
+//	if (surface == NULL)
+//		printf("Image load error: %s\n", IMG_GetError());
+//
+//	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+//	if (texture == NULL)
+//		printf("Create texture error: %s\n", SDL_GetError());
+//
+//	SDL_FreeSurface(surface);
+//
+//	return texture;
+//}
 
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-		printf("Image load error: %s\n", IMG_GetError());
+// SDL_Texture* Graphics::createText(TTF_Font* font, std::string text, SDL_Color color) {
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	if (texture == NULL)
-		printf("Create texture error: %s\n", SDL_GetError());
+// 	SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
+// 	if (surface == NULL)
+// 		printf("Text create error: %s", TTF_GetError());
 
-	SDL_FreeSurface(surface);
+// 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+// 	if (texture == NULL)
+// 		printf("Text render error: %s", SDL_GetError());
 
-	return texture;
-}
+// 	SDL_FreeSurface(surface);
 
-SDL_Texture* Graphics::createText(TTF_Font* font, std::string text, SDL_Color color) {
-
-	SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
-	if (surface == NULL)
-		printf("Text create error: %s", TTF_GetError());
-
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	if (texture == NULL)
-		printf("Text render error: %s", SDL_GetError());
-
-	SDL_FreeSurface(surface);
-
-	return texture;
-}
+// 	return texture;
+// }
 
 void Graphics::drawBox(Transform2D transform, Vector2D size, bool fill, SDL_Color color) {
 
@@ -196,7 +196,7 @@ void Graphics::exit() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 
-	TTF_Quit();
-	IMG_Quit();
+	//TTF_Quit();
+	//IMG_Quit();
 	SDL_Quit();
 }
