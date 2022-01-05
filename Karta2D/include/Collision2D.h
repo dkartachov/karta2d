@@ -1,6 +1,6 @@
 #pragma once
-#include "SimpleECS/EntityManager.h"
-#include "SimpleECS/Components.h"
+#include "EntityManager.h"
+#include "Components.h"
 #include <tuple>
 
 class Collision2D {

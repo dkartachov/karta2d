@@ -3,8 +3,8 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
-#include "Tools/Vector2D.h"
-#include "SimpleECS/Components/Transform2D.h"
+#include "Vector2D.h"
+#include "Transform2D.h"
 
 class Graphics {
 public:

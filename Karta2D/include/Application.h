@@ -1,7 +1,7 @@
 #pragma once
-#include "SimpleECS/SimpleECS.h"
-#include "SimpleECS/EntityManager.h"
-#include "SimpleECS/Components.h"
+#include "SimpleECS.h"
+#include "EntityManager.h"
+#include "Components.h"
 #include "Collision2D.h"
 #include "Graphics.h"
 #include "Timer.h"

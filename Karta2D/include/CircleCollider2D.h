@@ -1,5 +1,5 @@
 #pragma once
-#include "SimpleECS/SimpleECS.h"
+#include "SimpleECS.h"
 #include "Graphics.h"
 #include "Transform2D.h"
 
