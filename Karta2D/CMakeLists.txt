@@ -9,6 +9,7 @@ set(SOURCE_LIST
     "src/Application.cpp"
     "src/Graphics.cpp"
     "src/Timer.cpp"
+    "src/Collision2D.cpp"
 )
 
 set(HEADER_LIST
