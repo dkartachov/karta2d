@@ -33,8 +33,5 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity box;
-	Entity bigBox;
-	Entity ground, ceiling;
-	Entity wall;
+	Entity box, circle, ground;
 };

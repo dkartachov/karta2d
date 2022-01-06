@@ -23,27 +23,26 @@ Application::Application() {
 	box.setName("Box");
 	box.AddComponent<BoxCollider2D>();
 	box.AddComponent<Box>();
-	box.GetComponent<Box>()->setSize(30, 30);
+	box.GetComponent<Box>()->setSize(60, 60);
 	box.GetComponent<Box>()->fill();
 	box.GetComponent<Box>()->setColor(255, 0, 0, 255);
 	box.AddComponent<Rigidbody2D>();
-	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 200, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
-	box.GetComponent<BoxCollider2D>()->setSize(30, 30);
+	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
+	box.GetComponent<BoxCollider2D>()->setSize(60, 60);
 	box.GetComponent<Rigidbody2D>()->setMass(1);
-	box.GetComponent<Rigidbody2D>()->setVelocity({ 150, -200 });
+	box.GetComponent<Rigidbody2D>()->setVelocity({ 0, 0 });
+	box.GetComponent<Rigidbody2D>()->setGravity(false);
 
-	bigBox.setName("Big Box");
-	bigBox.AddComponent<BoxCollider2D>();
-	bigBox.AddComponent<Box>();
-	bigBox.GetComponent<Box>()->setSize(50, 60);
-	bigBox.GetComponent<Box>()->fill();
-	bigBox.GetComponent<Box>()->setColor(0, 0, 255, 255);
-	bigBox.AddComponent<Rigidbody2D>();
-	bigBox.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
-	bigBox.GetComponent<BoxCollider2D>()->setSize(50, 60);
-	bigBox.GetComponent<Rigidbody2D>()->setMass(1);
-	bigBox.GetComponent<Rigidbody2D>()->setVelocity({ -150, -200 });
-	bigBox.GetComponent<Rigidbody2D>()->addForce({ 0, 0 });
+	circle.setName("Circle");
+	circle.AddComponent<CircleCollider2D>();
+	circle.AddComponent<Box>();
+	circle.GetComponent<Box>()->setSize(60, 60);
+	circle.AddComponent<Rigidbody2D>();
+	circle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 100, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
+	circle.GetComponent<CircleCollider2D>()->setRadius(30);
+	circle.GetComponent<Rigidbody2D>()->setMass(1);
+	circle.GetComponent<Rigidbody2D>()->setVelocity({ -30, 0});
+	circle.GetComponent<Rigidbody2D>()->setGravity(false);
 
 	ground.setName("Ground");
 	ground.AddComponent<BoxCollider2D>();
@@ -54,7 +53,7 @@ Application::Application() {
 	ground.GetComponent<BoxCollider2D>()->setSize(1600, 50);
 
 
-	std::vector<Entity*> entities = { &ground, &box, &bigBox };
+	std::vector<Entity*> entities = { &ground, &box, &circle };
 	EntityManager::getInstance().addEntities(entities);
 }
 
@@ -69,12 +68,16 @@ void Application::earlyUpdate() {
 
 void Application::update() {
 	if (!simulate) return;
+
 	EntityManager::getInstance().update();
 }
 
 void Application::lateUpdate() {
 	if (!simulate) return;
+
 	Collision2D::resolveCollisions();
+
+	Collision2D::BoxCircle(box, circle);
 }
 
 void Application::render() {
