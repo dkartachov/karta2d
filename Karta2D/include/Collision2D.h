@@ -6,11 +6,13 @@
 class Collision2D {
 public:
 	// collision detection
-	static bool AABB(Entity& thisEntity, Entity& entity);
+	static bool AABB(std::pair<Vector2D, Vector2D>& squareA, std::pair<Vector2D, Vector2D>& squareB);
+	static bool BoxBox(Entity& boxA, Entity& boxB);
 	static bool CircleCircle(Entity& thisEntity, Entity& entity);
+	static bool BoxCircle(Entity& box, Entity& circle);
 
 	// normals
-	static std::pair<Vector2D, float> getAABBNormal(Entity& thisEntity, Entity& entity);
+	static std::pair<Vector2D, float> getBoxBoxNormal(Entity& thisEntity, Entity& entity);
 	static std::pair<Vector2D, float> getCircleCircleNormal(Entity& entA, Entity& entB);
 
 	// collision resolution

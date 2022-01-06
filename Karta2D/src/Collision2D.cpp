@@ -1,22 +1,35 @@
 #include "Collision2D.h"
 
-bool Collision2D::AABB(Entity& thisEntity, Entity& entity) {
-	Vector2D thisEntityPos = thisEntity.GetComponent<Transform2D>()->getPosition();
-	Vector2D thisEntityBox = thisEntity.GetComponent<BoxCollider2D>()->getSize();
+bool Collision2D::AABB(std::pair<Vector2D, Vector2D>& squareA, std::pair<Vector2D, Vector2D>& squareB) {
+	Vector2D& squareAPos = squareA.first;
+	Vector2D& squareABox = squareA.second;
 
-	Vector2D entityPos = entity.GetComponent<Transform2D>()->getPosition();
-	Vector2D entityBox = entity.GetComponent<BoxCollider2D>()->getSize();
+	Vector2D squareBPos = squareB.first;
+	Vector2D squareBBox = squareB.second;
 
-	if (thisEntityPos.x + 0.5 * thisEntityBox.x > entityPos.x - 0.5 * entityBox.x &&
-		thisEntityPos.x - 0.5 * thisEntityBox.x < entityPos.x + 0.5 * entityBox.x &&
-		thisEntityPos.y + 0.5 * thisEntityBox.y > entityPos.y - 0.5 * entityBox.y &&
-		thisEntityPos.y - 0.5 * thisEntityBox.y < entityPos.y + 0.5 * entityBox.y) {
+	if (squareAPos.x + 0.5 * squareABox.x > squareBPos.x - 0.5 * squareBBox.x &&
+		squareAPos.x - 0.5 * squareABox.x < squareBPos.x + 0.5 * squareBBox.x &&
+		squareAPos.y + 0.5 * squareABox.y > squareBPos.y - 0.5 * squareBBox.y &&
+		squareAPos.y - 0.5 * squareABox.y < squareBPos.y + 0.5 * squareBBox.y) {
 
-		//std::printf("Collision detected between '%s' and '%s'\n", thisEntity.getName().c_str(), entity.getName().c_str());
+		//std::printf("Collision detected between '%s' and '%s'\n", squareA.getName().c_str(), squareB.getName().c_str());
 		return true;
 	}
 
 	return false;
+}
+
+bool Collision2D::BoxBox(Entity& boxA, Entity& boxB) {
+	Vector2D boxAPos = boxA.GetComponent<Transform2D>()->getPosition();
+	Vector2D boxABox = boxA.GetComponent<BoxCollider2D>()->getSize();
+
+	Vector2D boxBPos = boxB.GetComponent<Transform2D>()->getPosition();
+	Vector2D boxBBox = boxB.GetComponent<BoxCollider2D>()->getSize();
+
+	std::pair<Vector2D, Vector2D> squareA = { boxAPos, boxABox };
+	std::pair<Vector2D, Vector2D> squareB = { boxBPos, boxBBox };
+
+	return AABB(squareA, squareB);
 }
 
 bool Collision2D::CircleCircle(Entity& thisEntity, Entity& entity) {
@@ -37,7 +50,53 @@ bool Collision2D::CircleCircle(Entity& thisEntity, Entity& entity) {
 	return false;
 }
 
-std::pair<Vector2D, float> Collision2D::getAABBNormal(Entity& thisEntity, Entity& entity) {
+bool Collision2D::BoxCircle(Entity& box, Entity& circle) {
+	Vector2D boxPos = box.GetComponent<Transform2D>()->getPosition();
+	Vector2D boxBox = box.GetComponent<BoxCollider2D>()->getSize();
+
+	Vector2D circlePos = circle.GetComponent<Transform2D>()->getPosition();
+	float circleRadius = circle.GetComponent<CircleCollider2D>()->getRadius();
+
+	std::pair<Vector2D, Vector2D> boxSquare = { boxPos, boxBox };
+	std::pair<Vector2D, Vector2D> circleSquare = { circlePos, 2 * circleRadius * oneVector };
+
+	if (AABB(boxSquare, circleSquare)) {
+		bool mightCollide = 
+			(circlePos.x > boxPos.x + boxBox.x / 2 && circlePos.y > boxPos.y + boxBox.y / 2) ||
+			(circlePos.x > boxPos.x + boxBox.x / 2 && circlePos.y < boxPos.y - boxBox.y / 2) ||
+			(circlePos.x < boxPos.x - boxBox.x / 2 && circlePos.y > boxPos.y + boxBox.y / 2) ||
+			(circlePos.x < boxPos.x - boxBox.x / 2 && circlePos.y < boxPos.y - boxBox.y / 2);
+
+		if (mightCollide) {
+			Vector2D topLeft = { boxPos.x - boxBox.x / 2, boxPos.y - boxBox.y / 2 };
+			Vector2D botLeft = { boxPos.x - boxBox.x / 2, boxPos.y + boxBox.y / 2 };
+			Vector2D botRight = { boxPos.x + boxBox.x / 2, boxPos.y + boxBox.y / 2 };
+			Vector2D topRight = { boxPos.x + boxBox.x / 2, boxPos.y - boxBox.y / 2 };
+
+			circleRadius *= circleRadius;
+
+			bool collision = 
+				(topLeft - circlePos).MagnitudeSquared() <= circleRadius ||
+				(botLeft - circlePos).MagnitudeSquared() <= circleRadius ||
+				(botRight - circlePos).MagnitudeSquared() <= circleRadius ||
+				(topRight - circlePos).MagnitudeSquared() <= circleRadius;
+
+			if (collision) {
+				std::printf("Collision detected between '%s' and '%s'\n", box.getName().c_str(), circle.getName().c_str());
+				return true;
+			}
+
+			return false;
+		}
+
+		std::printf("Collision detected between '%s' and '%s'\n", box.getName().c_str(), circle.getName().c_str());
+		return true;
+	}
+
+	return false;
+}
+
+std::pair<Vector2D, float> Collision2D::getBoxBoxNormal(Entity& thisEntity, Entity& entity) {
 	Vector2D thisEntityPos = thisEntity.GetComponent<Transform2D>()->getPosition();
 	Vector2D thisEntityBox = thisEntity.GetComponent<BoxCollider2D>()->getSize();
 
@@ -155,8 +214,8 @@ void Collision2D::resolveCollisions() {
 			if (!thisEntity->HasComponent<Rigidbody2D>() && !entity->HasComponent<Rigidbody2D>()) continue;
 
 			if (thisEntity->HasComponent<BoxCollider2D>() && entity->HasComponent<BoxCollider2D>()) {
-				if (AABB(*thisEntity, *entity)) {
-					std::pair<Vector2D, float> params = getAABBNormal(*thisEntity, *entity);
+				if (BoxBox(*thisEntity, *entity)) {
+					std::pair<Vector2D, float> params = getBoxBoxNormal(*thisEntity, *entity);
 					Vector2D collisionNormal = params.first;
 					float penetration = params.second;
 
