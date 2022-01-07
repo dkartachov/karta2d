@@ -14,6 +14,7 @@ public:
 	// normals
 	static std::pair<Vector2D, float> getBoxBoxNormal(Entity& thisEntity, Entity& entity);
 	static std::pair<Vector2D, float> getCircleCircleNormal(Entity& entA, Entity& entB);
+	static std::pair<Vector2D, float> getBoxCircleNormal(Entity& box, Entity& circle);
 
 	// collision resolution
 	static void resolveCollision(Entity& thisEntity, Entity& entity, Vector2D collisionNormal, float penetration);

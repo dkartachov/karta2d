@@ -145,6 +145,50 @@ std::pair<Vector2D, float> Collision2D::getCircleCircleNormal(Entity& entA, Enti
 	return { normal, penetration };
 }
 
+std::pair<Vector2D, float> Collision2D::getBoxCircleNormal(Entity& box, Entity& circle) {
+	Vector2D boxPos = box.GetComponent<Transform2D>()->getPosition();
+	Vector2D boxSize = box.GetComponent<BoxCollider2D>()->getSize();
+
+	Vector2D circlePos = circle.GetComponent<Transform2D>()->getPosition();
+	float radius = circle.GetComponent<CircleCollider2D>()->getRadius();
+
+	Vector2D normal;
+	float penetration;
+
+	double dx = 0;
+	if (circlePos.x > boxPos.x) {
+		dx = fabs(((double)boxPos.x - (double)circlePos.x) + 0.5 * ((double)boxSize.x + (double)2 * radius));
+	}
+	else {
+		dx = fabs(((double)boxPos.x - (double)circlePos.x) - 0.5 * ((double)boxSize.x + (double)2 * radius));
+	}
+
+	double dy = 0;
+	if (circlePos.y > boxPos.y) {
+		dy = fabs(((double)boxPos.y - (double)circlePos.y) + 0.5 * ((double)boxSize.y + (double)2 * radius));
+	}
+	else {
+		dy = fabs(((double)boxPos.y - (double)circlePos.y) - 0.5 * ((double)boxSize.y + (double)2 * radius));
+	}
+
+	if (dx <= dy) {
+		if (circlePos.x > boxPos.x) {
+			return { Vector2D(-1, 0), dx };
+		}
+		else {
+			return { Vector2D(1, 0), dx };
+		}
+	}
+	else {
+		if (circlePos.y > boxPos.y) {
+			return { Vector2D(0, -1), dy };
+		}
+		else {
+			return { Vector2D(0, 1), dy };
+		}
+	}
+}
+
 void Collision2D::resolveCollision(Entity& thisEntity, Entity& entity, Vector2D collisionNormal, float penetration) {
 	bool thisEntityHasRb = thisEntity.HasComponent<Rigidbody2D>();
 	bool entityHasRb = entity.HasComponent<Rigidbody2D>();
@@ -250,6 +294,19 @@ void Collision2D::resolveCollisions() {
 					float penetration = params.second;
 
 					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
+					return;
+				}
+			}
+
+			if (thisEntity->HasComponent<BoxCollider2D>() && entity->HasComponent<CircleCollider2D>()) {
+				if (BoxCircle(*thisEntity, *entity)) {
+					std::pair<Vector2D, float> params = getBoxCircleNormal(*thisEntity, *entity);
+					Vector2D collisionNormal = params.first;
+					float penetration = params.second;
+
+					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
+					//std::printf("Collision normal is (%.2f, %.2f)\n", collisionNormal.x, collisionNormal.y);
+
 					return;
 				}
 			}
