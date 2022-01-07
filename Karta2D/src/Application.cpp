@@ -39,7 +39,7 @@ Application::Application() {
 	circle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 140, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
 	circle.GetComponent<CircleCollider2D>()->setRadius(60);
 	circle.GetComponent<Rigidbody2D>()->setMass(1);
-	circle.GetComponent<Rigidbody2D>()->setVelocity({ -100, -100});
+	circle.GetComponent<Rigidbody2D>()->setVelocity({ -100, -200});
 	circle.GetComponent<Rigidbody2D>()->setGravity(true);
 
 	ground.setName("Ground");
@@ -49,7 +49,6 @@ Application::Application() {
 	ground.GetComponent<Box>()->fill();
 	ground.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 300));
 	ground.GetComponent<BoxCollider2D>()->setSize(1600, 50);
-
 
 	std::vector<Entity*> entities = { &ground, &box, &circle };
 	EntityManager::getInstance().addEntities(entities);
@@ -75,7 +74,7 @@ void Application::lateUpdate() {
 
 	Collision2D::resolveCollisions();
 
-	Collision2D::BoxCircle(box, circle);
+	//Collision2D::BoxCircle(box, circle);
 }
 
 void Application::render() {
