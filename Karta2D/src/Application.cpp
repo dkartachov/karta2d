@@ -41,7 +41,7 @@ Application::Application() {
 	circle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 100, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
 	circle.GetComponent<CircleCollider2D>()->setRadius(30);
 	circle.GetComponent<Rigidbody2D>()->setMass(1);
-	circle.GetComponent<Rigidbody2D>()->setVelocity({ -30, 0});
+	circle.GetComponent<Rigidbody2D>()->setVelocity({ -30, -30});
 	circle.GetComponent<Rigidbody2D>()->setGravity(false);
 
 	ground.setName("Ground");

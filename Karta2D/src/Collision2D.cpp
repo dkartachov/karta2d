@@ -61,36 +61,38 @@ bool Collision2D::BoxCircle(Entity& box, Entity& circle) {
 	std::pair<Vector2D, Vector2D> circleSquare = { circlePos, 2 * circleRadius * oneVector };
 
 	if (AABB(boxSquare, circleSquare)) {
-		bool mightCollide = 
-			(circlePos.x > boxPos.x + boxBox.x / 2 && circlePos.y > boxPos.y + boxBox.y / 2) ||
-			(circlePos.x > boxPos.x + boxBox.x / 2 && circlePos.y < boxPos.y - boxBox.y / 2) ||
-			(circlePos.x < boxPos.x - boxBox.x / 2 && circlePos.y > boxPos.y + boxBox.y / 2) ||
-			(circlePos.x < boxPos.x - boxBox.x / 2 && circlePos.y < boxPos.y - boxBox.y / 2);
+		bool collision = true;
 
-		if (mightCollide) {
-			Vector2D topLeft = { boxPos.x - boxBox.x / 2, boxPos.y - boxBox.y / 2 };
-			Vector2D botLeft = { boxPos.x - boxBox.x / 2, boxPos.y + boxBox.y / 2 };
-			Vector2D botRight = { boxPos.x + boxBox.x / 2, boxPos.y + boxBox.y / 2 };
-			Vector2D topRight = { boxPos.x + boxBox.x / 2, boxPos.y - boxBox.y / 2 };
+		if (circlePos.x > boxPos.x + boxBox.x / 2) {
+			if (circlePos.y > boxPos.y + boxBox.y / 2) { // bottom right
+				Vector2D botRight = { boxPos.x + boxBox.x / 2, boxPos.y + boxBox.y / 2 };
 
-			circleRadius *= circleRadius;
-
-			bool collision = 
-				(topLeft - circlePos).MagnitudeSquared() <= circleRadius ||
-				(botLeft - circlePos).MagnitudeSquared() <= circleRadius ||
-				(botRight - circlePos).MagnitudeSquared() <= circleRadius ||
-				(topRight - circlePos).MagnitudeSquared() <= circleRadius;
-
-			if (collision) {
-				std::printf("Collision detected between '%s' and '%s'\n", box.getName().c_str(), circle.getName().c_str());
-				return true;
+				collision = (botRight - circlePos).MagnitudeSquared() <= circleRadius * circleRadius;
 			}
+			else if (circlePos.y < boxPos.y - boxBox.y / 2) { // top right
+				Vector2D topRight = { boxPos.x + boxBox.x / 2, boxPos.y - boxBox.y / 2 };
+				
+				collision = (topRight - circlePos).MagnitudeSquared() <= circleRadius * circleRadius;
+			}
+		}
+		else if (circlePos.x < boxPos.x - boxBox.x / 2) {
+			if (circlePos.y > boxPos.y + boxBox.y / 2) { // bottom left
+				Vector2D botLeft = { boxPos.x - boxBox.x / 2, boxPos.y + boxBox.y / 2 };
 
-			return false;
+				collision = (botLeft - circlePos).MagnitudeSquared() <= circleRadius * circleRadius;
+			}
+			else if (circlePos.y < boxPos.y - boxBox.y / 2) { // top left
+				Vector2D topLeft = { boxPos.x - boxBox.x / 2, boxPos.y - boxBox.y / 2 };
+
+				collision = (topLeft - circlePos).MagnitudeSquared() <= circleRadius * circleRadius;
+			}
 		}
 
-		std::printf("Collision detected between '%s' and '%s'\n", box.getName().c_str(), circle.getName().c_str());
-		return true;
+		if (collision) {
+			//std::printf("Collision detected between '%s' and '%s'\n", box.getName().c_str(), circle.getName().c_str());
+		}
+
+		return collision;
 	}
 
 	return false;
