@@ -283,7 +283,7 @@ void Collision2D::resolveCollisions() {
 
 					//std::printf("Normal for Entity '%s' is (%d, %d)\n", thisEntity->getName().c_str(), (int)collisionNormal.x, (int)collisionNormal.y);
 					//std::printf("Collision detected between entities %d and %d\n", thisEntity->getId(), entity->getId());
-					break;
+					//break;
 				}
 			}
 
@@ -294,7 +294,7 @@ void Collision2D::resolveCollisions() {
 					float penetration = params.second;
 
 					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
-					return;
+					//return;
 				}
 			}
 
@@ -307,7 +307,7 @@ void Collision2D::resolveCollisions() {
 					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
 					//std::printf("Collision normal is (%.2f, %.2f)\n", collisionNormal.x, collisionNormal.y);
 
-					return;
+					//return;
 				}
 			}
 

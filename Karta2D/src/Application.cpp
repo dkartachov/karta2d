@@ -30,19 +30,17 @@ Application::Application() {
 	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
 	box.GetComponent<BoxCollider2D>()->setSize(60, 60);
 	box.GetComponent<Rigidbody2D>()->setMass(1);
-	box.GetComponent<Rigidbody2D>()->setVelocity({ 0, 0 });
-	box.GetComponent<Rigidbody2D>()->setGravity(false);
+	box.GetComponent<Rigidbody2D>()->setVelocity({ 0, -200 });
+	box.GetComponent<Rigidbody2D>()->setGravity(true);
 
 	circle.setName("Circle");
 	circle.AddComponent<CircleCollider2D>();
-	circle.AddComponent<Box>();
-	circle.GetComponent<Box>()->setSize(120, 120);
 	circle.AddComponent<Rigidbody2D>();
 	circle.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 140, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
 	circle.GetComponent<CircleCollider2D>()->setRadius(60);
 	circle.GetComponent<Rigidbody2D>()->setMass(1);
-	circle.GetComponent<Rigidbody2D>()->setVelocity({ -50, -50});
-	circle.GetComponent<Rigidbody2D>()->setGravity(false);
+	circle.GetComponent<Rigidbody2D>()->setVelocity({ -100, -100});
+	circle.GetComponent<Rigidbody2D>()->setGravity(true);
 
 	ground.setName("Ground");
 	ground.AddComponent<BoxCollider2D>();
