@@ -1,7 +1,6 @@
 #pragma once
 #include "EntityManager.h"
 #include "Components.h"
-#include <tuple>
 
 class Collision2D {
 public:
@@ -10,6 +9,8 @@ public:
 	static bool BoxBox(Entity& boxA, Entity& boxB);
 	static bool CircleCircle(Entity& thisEntity, Entity& entity);
 	static bool BoxCircle(Entity& box, Entity& circle);
+	static bool overlap(const Vector2D normal, const std::vector<Vector2D>& entAVertices, const std::vector<Vector2D>& entBVertices);
+	static bool satDetection(Entity& entA, Entity& entB);
 
 	// normals
 	static std::pair<Vector2D, float> getBoxBoxNormal(Entity& thisEntity, Entity& entity);
@@ -18,6 +19,5 @@ public:
 
 	// collision resolution
 	static void resolveCollision(Entity& thisEntity, Entity& entity, Vector2D collisionNormal, float penetration);
-	static void resolveCollisionTuples(std::vector<std::tuple<Entity*, Entity*, Vector2D, float>>& collisionTuples);
 	static void resolveCollisions();
 };

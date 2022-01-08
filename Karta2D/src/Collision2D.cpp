@@ -1,4 +1,5 @@
 #include "Collision2D.h"
+#include <algorithm>
 
 bool Collision2D::AABB(std::pair<Vector2D, Vector2D>& squareA, std::pair<Vector2D, Vector2D>& squareB) {
 	Vector2D& squareAPos = squareA.first;
@@ -96,6 +97,70 @@ bool Collision2D::BoxCircle(Entity& box, Entity& circle) {
 	}
 
 	return false;
+}
+
+bool Collision2D::overlap(const Vector2D normal, const std::vector<Vector2D>& entAVertices, const std::vector<Vector2D>& entBVertices) {
+	float projA1 = Vector2D::dot(normal, entAVertices[0]);
+	float projA2 = Vector2D::dot(normal, entAVertices[1]);
+	float projA3 = Vector2D::dot(normal, entAVertices[2]);
+	float projA4 = Vector2D::dot(normal, entAVertices[3]);
+
+	float minA = std::min({ projA1, projA2, projA3, projA4 });
+	float maxA = std::max({ projA1, projA2, projA3, projA4 });
+
+	// Entity B projections
+	float projB1 = Vector2D::dot(normal, entBVertices[0]);
+	float projB2 = Vector2D::dot(normal, entBVertices[1]);
+	float projB3 = Vector2D::dot(normal, entBVertices[2]);
+	float projB4 = Vector2D::dot(normal, entBVertices[3]);
+
+	float minB = std::min({ projB1, projB2, projB3, projB4 });
+	float maxB = std::max({ projB1, projB2, projB3, projB4 });
+
+	return !(maxA <= minB || minA >= maxB);
+}
+
+bool Collision2D::satDetection(Entity& entA, Entity& entB) {
+	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition();
+	float entADiag = entA.GetComponent<BoxCollider2D>()->getDiag();
+
+	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition();
+	float entBDiag = entB.GetComponent<BoxCollider2D>()->getDiag();
+
+	//if ((entAPos - entBPos).Magnitude() > entADiag + entBDiag) return false;
+
+	std::vector<Vector2D> entANormals, entBNormals;
+	std::vector<Vector2D> entAVertices, entBVertices;
+
+	if (entA.HasComponent<BoxCollider2D>()) {
+		entANormals = entA.GetComponent<BoxCollider2D>()->getNormals();
+		entAVertices = entA.GetComponent<BoxCollider2D>()->getVertices();
+	}
+	
+	if (entB.HasComponent<BoxCollider2D>()) {
+		entBNormals = entB.GetComponent<BoxCollider2D>()->getNormals();
+		entBVertices = entB.GetComponent<BoxCollider2D>()->getVertices();
+	}
+
+	bool collision = true;
+
+	for (auto& normal : entANormals) {
+		if (!overlap(normal, entAVertices, entBVertices)) {
+			collision = false;
+			break;
+		}
+	}
+
+	if (collision) {
+		for (auto& normal : entBNormals) {
+			if (!overlap(normal, entAVertices, entBVertices)) {
+				collision = false;
+				break;
+			}
+		}
+	}
+
+	return collision;
 }
 
 std::pair<Vector2D, float> Collision2D::getBoxBoxNormal(Entity& thisEntity, Entity& entity) {
@@ -199,7 +264,8 @@ void Collision2D::resolveCollision(Entity& thisEntity, Entity& entity, Vector2D 
 	Vector2D relVelocity = thisEntityVel - entityVel;
 	float velAlongNormal = Vector2D::dot(relVelocity, collisionNormal);
 
-	float restitution = 0.5;
+	float restitution = (thisEntity.GetComponent<BoxCollider2D>()->restitution + entity.GetComponent<BoxCollider2D>()->restitution) / 2;
+
 	float j = -(1 + restitution) * velAlongNormal;
 
 	float thisEntityInvMass = thisEntityHasRb ? 1 / thisEntity.GetComponent<Rigidbody2D>()->getMass() : 0;
@@ -216,34 +282,27 @@ void Collision2D::resolveCollision(Entity& thisEntity, Entity& entity, Vector2D 
 		entity.GetComponent<Transform2D>()->translate(-0.5 * penetration * collisionNormal);
 		entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - entityInvMass * impulse);
 
+		thisEntity.GetComponent<BoxCollider2D>()->update();
+		entity.GetComponent<BoxCollider2D>()->update();
+
 		return;
 	}
 
 	if (thisEntityHasRb) {
 		thisEntity.GetComponent<Transform2D>()->translate(penetration * collisionNormal);
 		thisEntity.GetComponent<Rigidbody2D>()->setVelocity(thisEntityVel + thisEntityInvMass * impulse);
+		thisEntity.GetComponent<BoxCollider2D>()->update();
 	}
 
 	if (entityHasRb) {
 		entity.GetComponent<Transform2D>()->translate(-penetration * collisionNormal);
 		entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - entityInvMass * impulse);
-	}
-}
-
-void Collision2D::resolveCollisionTuples(std::vector<std::tuple<Entity*, Entity*, Vector2D, float>>& collisionTuples) {
-	for (auto& colTuple : collisionTuples) {
-		Entity* entA = std::get<0>(colTuple);
-		Entity* entB = std::get<1>(colTuple);
-		Vector2D collisionNormal = std::get<2>(colTuple);
-		float penetration = std::get<3>(colTuple);
-
-		resolveCollision(*entA, *entB, collisionNormal, penetration);
+		entity.GetComponent<BoxCollider2D>()->update();
 	}
 }
 
 void Collision2D::resolveCollisions() {
 	std::vector<Entity*>& entities = EntityManager::getInstance().getEntities();
-	std::vector<std::tuple<Entity*, Entity*, Vector2D, float>> collisionTuples;
 
 	for (auto& thisEntity : entities) {
 		// skip if this entity doesn't have any collider
@@ -259,34 +318,18 @@ void Collision2D::resolveCollisions() {
 			// skip if neither entity have rigidbody component
 			if (!thisEntity->HasComponent<Rigidbody2D>() && !entity->HasComponent<Rigidbody2D>()) continue;
 
+			// DETECT AND RESOLVE BOX-BOX COLLISIONS //
 			if (thisEntity->HasComponent<BoxCollider2D>() && entity->HasComponent<BoxCollider2D>()) {
-				if (BoxBox(*thisEntity, *entity)) {
+				if (satDetection(*thisEntity, *entity)) {
 					std::pair<Vector2D, float> params = getBoxBoxNormal(*thisEntity, *entity);
 					Vector2D collisionNormal = params.first;
 					float penetration = params.second;
 
-					auto it = std::find_if(collisionTuples.begin(), collisionTuples.end(), [&](std::tuple<Entity*, Entity*, Vector2D, float> colTuple) {
-						Entity* entA = std::get<0>(colTuple);
-						Entity* entB = std::get<1>(colTuple);
-
-						bool foundFirst = entA->getId() == thisEntity->getId() || entA->getId() == entity->getId();
-						bool foundSecond = entB->getId() == thisEntity->getId() || entB->getId() == entity->getId();
-
-						return foundFirst && foundSecond;
-						});
-
-					if (it != collisionTuples.end()) {
-						continue;
-					}
-
-					collisionTuples.push_back({ thisEntity, entity, collisionNormal, penetration });
-
-					//std::printf("Normal for Entity '%s' is (%d, %d)\n", thisEntity->getName().c_str(), (int)collisionNormal.x, (int)collisionNormal.y);
-					//std::printf("Collision detected between entities %d and %d\n", thisEntity->getId(), entity->getId());
-					//break;
+					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
 				}
 			}
 
+			// DETECT AND RESOLVE CIRCLE-CIRCLE COLLISIONS //
 			if (thisEntity->HasComponent<CircleCollider2D>() && entity->HasComponent<CircleCollider2D>()) {
 				if (CircleCircle(*thisEntity, *entity)) {
 					std::pair<Vector2D, float> params = getCircleCircleNormal(*thisEntity, *entity);
@@ -294,10 +337,10 @@ void Collision2D::resolveCollisions() {
 					float penetration = params.second;
 
 					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
-					//return;
 				}
 			}
 
+			// DETECT AND RESOLVE BOX-CIRCLE COLLISIONS // TODO: Improve. A lot lol
 			if (thisEntity->HasComponent<BoxCollider2D>() && entity->HasComponent<CircleCollider2D>()) {
 				if (BoxCircle(*thisEntity, *entity)) {
 					std::pair<Vector2D, float> params = getBoxCircleNormal(*thisEntity, *entity);
@@ -305,14 +348,8 @@ void Collision2D::resolveCollisions() {
 					float penetration = params.second;
 
 					resolveCollision(*thisEntity, *entity, collisionNormal, penetration);
-					//std::printf("Collision normal is (%.2f, %.2f)\n", collisionNormal.x, collisionNormal.y);
-
-					//return;
 				}
 			}
-
 		}
 	}
-
-	resolveCollisionTuples(collisionTuples);
 }
