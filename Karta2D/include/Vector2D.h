@@ -57,6 +57,10 @@ struct Vector2D {
 	inline Vector2D operator- (const Vector2D& v) {
 		return Vector2D(x - v.x, y - v.y);
 	}
+
+	inline Vector2D operator- () {
+		return Vector2D(-x, -y);
+	}
 };
 
 inline Vector2D operator* (const float& c, const Vector2D& v) {
