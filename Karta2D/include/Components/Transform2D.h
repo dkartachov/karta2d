@@ -83,6 +83,7 @@ public:
 
 	// Get rotation in degrees
 	float getRotation(SPACE space = world) {
+		if (rotation * RAD_TO_DEG > 360 || rotation * RAD_TO_DEG < -360) rotation = 0;
 		return rotation * RAD_TO_DEG;
 	}
 
