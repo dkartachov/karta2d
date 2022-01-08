@@ -10,6 +10,7 @@ public:
 		mass = 1;
 		transform = nullptr;
 		velocity = zeroVector;
+		angularSpeed = 0;
 		acceleration = zeroVector;
 	}
 
@@ -37,6 +38,11 @@ public:
 		return velocity;
 	}
 
+	// Set the angular speed of the object in deg/s (counter-clockwise positive).
+	void setAngularSpeed(double angularSpeed) {
+		this->angularSpeed = angularSpeed;
+	}
+
 	void setAcceleration(Vector2D acceleration) {
 		this->acceleration = acceleration;
 	}
@@ -61,6 +67,7 @@ public:
 	void update() override {
 		float deltaT = Timer::Instance()->getDeltaTime();
 
+		// linear
 		float deltaX = velocity.x * deltaT + 0.5 * acceleration.x * deltaT * deltaT;
 		velocity.x += acceleration.x * deltaT;
 
@@ -68,6 +75,9 @@ public:
 		velocity.y += (acceleration.y + (gravity ? g : 0)) * deltaT;
 
 		transform->translate({ velocity.x * deltaT, velocity.y * deltaT });
+
+		// angular
+		transform->rotate(deltaT * angularSpeed);
 	}
 
 	void render() override {
@@ -84,5 +94,6 @@ private:
 	float mass;
 	Transform2D* transform;
 	Vector2D velocity;
+	double angularSpeed;
 	Vector2D acceleration;
 };
