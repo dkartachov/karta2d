@@ -43,6 +43,10 @@ public:
 		this->angularSpeed = angularSpeed;
 	}
 
+	double getAngularSpeed() const {
+		return angularSpeed;
+	}
+
 	void setAcceleration(Vector2D acceleration) {
 		this->acceleration = acceleration;
 	}
