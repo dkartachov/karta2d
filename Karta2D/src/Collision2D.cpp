@@ -164,47 +164,6 @@ bool Collision2D::satDetection(Entity& entA, Entity& entB) {
 	return collision;
 }
 
-//std::pair<Vector2D, float> Collision2D::getBoxBoxNormal(Entity& thisEntity, Entity& entity) {
-//	Vector2D thisEntityPos = thisEntity.GetComponent<Transform2D>()->getPosition();
-//	Vector2D thisEntityBox = thisEntity.GetComponent<BoxCollider2D>()->getSize();
-//
-//	Vector2D entityPos = entity.GetComponent<Transform2D>()->getPosition();
-//	Vector2D entityBox = entity.GetComponent<BoxCollider2D>()->getSize();
-//
-//	double dx = 0;
-//	if (entityPos.x > thisEntityPos.x) {
-//		dx = fabs(((double)thisEntityPos.x - (double)entityPos.x) + 0.5 * ((double)thisEntityBox.x + (double)entityBox.x));
-//	}
-//	else {
-//		dx = fabs(((double)thisEntityPos.x - (double)entityPos.x) - 0.5 * ((double)thisEntityBox.x + (double)entityBox.x));
-//	}
-//
-//	double dy = 0;
-//	if (entityPos.y > thisEntityPos.y) {
-//		dy = fabs(((double)thisEntityPos.y - (double)entityPos.y) + 0.5 * ((double)thisEntityBox.y + (double)entityBox.y));
-//	}
-//	else {
-//		dy = fabs(((double)thisEntityPos.y - (double)entityPos.y) - 0.5 * ((double)thisEntityBox.y + (double)entityBox.y));
-//	}
-//
-//	if (dx <= dy) {
-//		if (entityPos.x > thisEntityPos.x) {
-//			return { Vector2D(-1, 0), dx };
-//		}
-//		else {
-//			return { Vector2D(1, 0), dx };
-//		}
-//	}
-//	else {
-//		if (entityPos.y > thisEntityPos.y) {
-//			return { Vector2D(0, -1), dy };
-//		}
-//		else {
-//			return { Vector2D(0, 1), dy };
-//		}
-//	}
-//}
-
 float Collision2D::getOverlap(const Vector2D normal, const std::vector<Vector2D> entAVertices, const std::vector<Vector2D> entBVertices) {
 	// Entity A projections
 	float projA1 = Vector2D::dot(normal, entAVertices[0]);
