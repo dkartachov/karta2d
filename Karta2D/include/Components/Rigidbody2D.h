@@ -22,6 +22,7 @@ public:
 		transform = entity->GetComponent<Transform2D>();
 	}
 
+	// Set mass of rigid body in kg
 	void setMass(float mass) {
 		this->mass = mass;
 	}
@@ -29,7 +30,8 @@ public:
 	float getMass() const {
 		return mass;
 	}
-
+	
+	// Set velocity of rigid body in m/s
 	void setVelocity(Vector2D velocity) {
 		this->velocity = velocity;
 	}
@@ -43,10 +45,12 @@ public:
 		this->angularSpeed = angularSpeed;
 	}
 
+	// Get the angular speed of the rigid body in deg/s (counter-clockwise positive).
 	double getAngularSpeed() const {
 		return angularSpeed;
 	}
-
+	
+	// Set the acceleration of the rigid body in m/s/s.
 	void setAcceleration(Vector2D acceleration) {
 		this->acceleration = acceleration;
 	}
@@ -55,9 +59,9 @@ public:
 		return acceleration;
 	}
 
-	// Add a constant force to the body.
+	// Add a constant force to the rigid body in N.
 	void addForce(Vector2D force) {
-		acceleration = force / mass;
+		acceleration = (force / mass);
 	}
 
 	void setGravity(bool state) {
@@ -93,7 +97,7 @@ public:
 	}
 
 private:
-	const float g = 150;
+	const float g = 9.81;
 	bool gravity;
 	float mass;
 	Transform2D* transform;

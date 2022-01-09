@@ -6,7 +6,7 @@ class Box : public Component {
 public:
 	Box() {
 		graphics = Graphics::Instance();
-		size = 50 * oneVector;
+		size = 1 * METERS_TO_PIXELS * oneVector;
 		width = size.x;
 		height = size.y;
 		color = { 255, 255, 255, 255 };
@@ -33,9 +33,13 @@ public:
 	void fill() {
 		filled = true;
 	}
-
+	
+	// Set width and height of the box in meters
 	void setSize(float width, float height) {
-		size = { width, height };
+		width *= METERS_TO_PIXELS;
+		height *= METERS_TO_PIXELS;
+
+		size = Vector2D(width, height);
 		this->width = width;
 		this->height = height;
 	}

@@ -19,7 +19,7 @@ public:
 				Transform2D* childTransform = child->GetComponent<Transform2D>();
 
 				Vector2D childScale = childTransform->getScale();
-				Vector2D childRelPos = childTransform->getPosition() - position;
+				Vector2D childRelPos = childTransform->getPosition() * METERS_TO_PIXELS - position;
 
 				Vector2D childRelScaledPos = childRelPos;
 
@@ -31,7 +31,7 @@ public:
 					childRelScaledPos.y = (scale.y / childScale.y) * childRelScaledPos.y;
 				}
 
-				childTransform->translate(childRelScaledPos - childRelPos);
+				childTransform->translate((childRelScaledPos - childRelPos) * PIXELS_TO_METERS);
 				childTransform->setScale(scale);
 			}
 		}
@@ -44,8 +44,10 @@ public:
 		return scale;
 	}
 
-	// Set position
-	void setPosition(Vector2D position) {
+	// Set position in meters or pixels. Specify optional inPixels parameter if using pixel positioning.
+	void setPosition(Vector2D position, bool inPixels = false) {
+		position = inPixels ? position : position * METERS_TO_PIXELS;
+
 		if (entity->hasChildren()) {
 			for (auto& child : entity->getChildren()) {
 				Transform2D* childTransform = child->GetComponent<Transform2D>();
@@ -58,18 +60,18 @@ public:
 		this->position = position;
 	}
 
-	// Get world position of entity. If entity has a parent, can specify local/world space.
+	// Get world position of entity in meters. If entity has a parent, can specify local/world space.
 	Vector2D getPosition(SPACE space = world) {
-		return position;
+		return position * PIXELS_TO_METERS;
 	}
 
-	// Set rotation (deg) to a specific angle (measured counter-clockwise)
+	// Set rotation to a specific angle in degrees (measured counter-clockwise).
 	void setRotation(float angle) {
 		if (entity->hasChildren()) {
 			for (auto& child : entity->getChildren()) {
 				child->GetComponent<Transform2D>()->setRotation(angle);
 
-				Vector2D childPos = child->GetComponent<Transform2D>()->getPosition();
+				Vector2D childPos = child->GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 				childPos = childPos - position;
 				childPos.rotateVector(angle);
 				childPos = childPos + position;
@@ -84,32 +86,35 @@ public:
 	// Get rotation in degrees
 	float getRotation(SPACE space = world) {
 		if (rotation * RAD_TO_DEG > 360 || rotation * RAD_TO_DEG < -360) rotation = 0;
+
 		return rotation * RAD_TO_DEG;
 	}
 
-	// Translate entity by a certain amount
+	// Translate entity by a certain amount in meters.
 	void translate(Vector2D amount) {
+		//amount *= METERS_TO_PIXELS;
+
 		if (entity->hasChildren()) {
 			for (auto& child : entity->getChildren()) {
 				child->GetComponent<Transform2D>()->translate(amount);
 			}
 		}
 
-		position += amount;
+		position += amount * METERS_TO_PIXELS;
 	}
 
-	// Rotate (deg) by a certain amount (counter-clockwise positive)
+	// Rotate by a certain amount in degrees (counter-clockwise positive)
 	void rotate(float delta) {
 		if (entity->hasChildren()) {
 			for (auto& child : entity->getChildren()) {
 				child->GetComponent<Transform2D>()->rotate(delta);
 
-				Vector2D childPos = child->GetComponent<Transform2D>()->getPosition();
+				Vector2D childPos = child->GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 				childPos = childPos - position;
 				childPos.rotateVector(delta);
 				childPos = childPos + position;
 
-				child->GetComponent<Transform2D>()->setPosition(childPos);
+				child->GetComponent<Transform2D>()->setPosition(childPos, true);
 			}
 		}
 		

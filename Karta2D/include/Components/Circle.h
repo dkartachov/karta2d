@@ -21,8 +21,9 @@ public:
 		transform = entity->GetComponent<Transform2D>();
 	}
 
-	void setRadius(int radius) {
-		this->radius = radius;
+	// Set radius in meters
+	void setRadius(float radius) {
+		this->radius = radius * METERS_TO_PIXELS;
 	}
 
 	void setOutline(int thickness, SDL_Color outlineColor = { 255, 255, 255, 255 }) {
@@ -40,7 +41,7 @@ public:
 	}
 
 	void render() override {
-		Graphics::Instance()->drawCircle(transform->getPosition(), radius, thickness, outlineColor, filled, fillColor);
+		Graphics::Instance()->drawCircle(transform->getPosition() * METERS_TO_PIXELS, radius, thickness, outlineColor, filled, fillColor);
 	}
 
 	void toString() override {

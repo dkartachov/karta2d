@@ -23,28 +23,40 @@ Application::Application() {
 	box1.setName("Box 1");
 	box1.AddComponent<BoxCollider2D>();
 	box1.AddComponent<Box>();
-	box1.GetComponent<Box>()->setSize(60, 60);
+	box1.GetComponent<Box>()->setSize(1.5, 1);
 	box1.GetComponent<Box>()->fill();
 	box1.GetComponent<Box>()->setColor(255, 0, 0, 255);
 	box1.AddComponent<Rigidbody2D>();
-	box1.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 150, Graphics::Instance()->SCREEN_HEIGHT / 2 - 50));
-	box1.GetComponent<BoxCollider2D>()->setSize(60, 60);
-	box1.GetComponent<Rigidbody2D>()->setMass(1);
-	box1.GetComponent<Rigidbody2D>()->setVelocity({ 0, 100 });
-	box1.GetComponent<Rigidbody2D>()->setGravity(false);
+	box1.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 20), true);
+	box1.GetComponent<BoxCollider2D>()->setSize(1.5, 1);
+	box1.GetComponent<Rigidbody2D>()->setMass(2);
+	box1.GetComponent<Rigidbody2D>()->setVelocity({ 0, 0 });
+	//box1.GetComponent<Rigidbody2D>()->setGravity(false);
 
 	box2.setName("Box 2");
 	box2.AddComponent<BoxCollider2D>();
 	box2.AddComponent<Box>();
-	box2.GetComponent<Box>()->setSize(600, 50);
+	box2.GetComponent<Box>()->setSize(0.5, 0.5);
 	box2.GetComponent<Box>()->fill();
-	box2.GetComponent<Box>()->setColor(0, 0, 255, 255);
+	box2.GetComponent<Box>()->setColor(0, 255, 0, 255);
 	box2.AddComponent<Rigidbody2D>();
-	box2.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100));
-	box2.GetComponent<BoxCollider2D>()->setSize(600, 50);
-	box2.GetComponent<Rigidbody2D>()->setGravity(false);
+	box2.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 - 600, Graphics::Instance()->SCREEN_HEIGHT / 2 + 200), true);
+	box2.GetComponent<BoxCollider2D>()->setSize(0.5, 0.5);
+	box2.GetComponent<Rigidbody2D>()->setMass(1);
+	box2.GetComponent<Rigidbody2D>()->setVelocity({ 3, -8 });
+	//box3.GetComponent<Rigidbody2D>()->setAngularSpeed(-360);
+	//box3.GetComponent<Rigidbody2D>()->setGravity(false);
 
-	std::vector<Entity*> entities = { &box2, &box1 };
+	ground.setName("Ground");
+	ground.AddComponent<BoxCollider2D>();
+	ground.AddComponent<Box>();
+	ground.GetComponent<Box>()->setSize(6, 0.5);
+	ground.GetComponent<Box>()->fill();
+	ground.GetComponent<Box>()->setColor(0, 0, 255, 255);
+	ground.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 + 100), true);
+	ground.GetComponent<BoxCollider2D>()->setSize(6, 0.5);
+
+	std::vector<Entity*> entities = { &box1, &box2, &ground };
 	EntityManager::getInstance().addEntities(entities);
 }
 

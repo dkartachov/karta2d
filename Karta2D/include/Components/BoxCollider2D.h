@@ -7,7 +7,7 @@ class BoxCollider2D : public Component {
 public:
 	BoxCollider2D() {
 		transform = nullptr;
-		size = 50 * oneVector;
+		size = 1 * METERS_TO_PIXELS * oneVector;
 		show = true;
 		restitution = 0.5;
 
@@ -38,9 +38,10 @@ public:
 		return show;
 	}
 
-	void setSize(int width, int height) {
-		size.x = width;
-		size.y = height;
+	// Set width and height of the collider in meters
+	void setSize(float width, float height) {
+		size.x = width * METERS_TO_PIXELS;
+		size.y = height * METERS_TO_PIXELS;
 	}
 
 	Vector2D getSize() const {
@@ -76,7 +77,7 @@ public:
 		normals[3] = n4;
 
 		// vertices calculation
-		double x = transform->getPosition().x, y = transform->getPosition().y;
+		double x = transform->getPosition().x * METERS_TO_PIXELS, y = transform->getPosition().y * METERS_TO_PIXELS;
 		double w = size.x, h = size.y;
 
 		double diag = sqrt(0.25 * (w * w + h * h));

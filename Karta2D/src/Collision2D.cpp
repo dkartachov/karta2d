@@ -122,10 +122,10 @@ bool Collision2D::overlap(const Vector2D normal, const std::vector<Vector2D>& en
 }
 
 bool Collision2D::satDetection(Entity& entA, Entity& entB) {
-	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition();
+	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 	float entADiag = entA.GetComponent<BoxCollider2D>()->getDiag();
 
-	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition();
+	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 	float entBDiag = entB.GetComponent<BoxCollider2D>()->getDiag();
 
 	//if ((entAPos - entBPos).Magnitude() > entADiag + entBDiag) return false;
@@ -190,10 +190,10 @@ float Collision2D::getOverlap(const Vector2D normal, const std::vector<Vector2D>
 }
 
 std::pair<Vector2D, float> Collision2D::getSATNormal(Entity& entA, Entity& entB) {
-	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition();
+	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 	float entADiag = entA.GetComponent<BoxCollider2D>()->getDiag();
 
-	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition();
+	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 	float entBDiag = entB.GetComponent<BoxCollider2D>()->getDiag();
 
 	std::vector<Vector2D> entANormals, entBNormals;
@@ -234,20 +234,20 @@ std::pair<Vector2D, float> Collision2D::getSATNormal(Entity& entA, Entity& entB)
 		}
 	}
 
-	return { collisionNormal, smallestOverlap };
+	return { collisionNormal, smallestOverlap * PIXELS_TO_METERS };
 }
 
 std::pair<Vector2D, float> Collision2D::getCircleCircleNormal(Entity& entA, Entity& entB) {
 	Vector2D normal = (entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition()).normalize();
-	float penetration = fabs((entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition()).Magnitude() - (entA.GetComponent<CircleCollider2D>()->getRadius() + entB.GetComponent<CircleCollider2D>()->getRadius()));
+	float penetration = fabs((entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS - entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS).Magnitude() - (entA.GetComponent<CircleCollider2D>()->getRadius() + entB.GetComponent<CircleCollider2D>()->getRadius()));
 	return { normal, penetration };
 }
 
 std::pair<Vector2D, float> Collision2D::getBoxCircleNormal(Entity& box, Entity& circle) {
-	Vector2D boxPos = box.GetComponent<Transform2D>()->getPosition();
+	Vector2D boxPos = box.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 	Vector2D boxSize = box.GetComponent<BoxCollider2D>()->getSize();
 
-	Vector2D circlePos = circle.GetComponent<Transform2D>()->getPosition();
+	Vector2D circlePos = circle.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
 	float radius = circle.GetComponent<CircleCollider2D>()->getRadius();
 
 	Vector2D normal;

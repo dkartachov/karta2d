@@ -4,6 +4,8 @@
 constexpr double PI = 3.1415926535897932384626433832795;
 constexpr double DEG_TO_RAD = PI / 180.0;
 constexpr double RAD_TO_DEG = 180.0 / PI;
+constexpr double METERS_TO_PIXELS = 100.0;
+constexpr double PIXELS_TO_METERS = 1.0 / METERS_TO_PIXELS;
 
 struct Vector2D {
 	float x, y;
@@ -52,6 +54,10 @@ struct Vector2D {
 
 	inline Vector2D operator+= (const Vector2D& v) {
 		return Vector2D(x += v.x, y += v.y);
+	}
+
+	inline Vector2D operator*= (const float& c) {
+		return Vector2D(x *= c, y *= c);
 	}
 
 	inline Vector2D operator- (const Vector2D& v) {

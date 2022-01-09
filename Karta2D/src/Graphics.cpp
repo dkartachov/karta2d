@@ -81,7 +81,7 @@ bool Graphics::init() {
 
 void Graphics::drawBox(Transform2D transform, Vector2D size, bool fill, SDL_Color color) {
 
-	double x = transform.getPosition().x, y = transform.getPosition().y;
+	double x = transform.getPosition().x * METERS_TO_PIXELS, y = transform.getPosition().y * METERS_TO_PIXELS;
 	double w = size.x, h = size.y;
 
 	double diag = sqrt(0.25 * (w * w + h * h));

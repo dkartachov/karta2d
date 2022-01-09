@@ -33,5 +33,5 @@ private:
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity box1, box2;
+	Entity box1, ground, box2;
 };
