@@ -83,21 +83,21 @@ public:
 		double diagAngle = atan2(h, w);
 		double theta = transform->getRotation() * DEG_TO_RAD;
 
-		float x1 = x - diag * cos(theta + diagAngle);
-		float y1 = y - diag * sin(theta + diagAngle);
-		Vector2D v1 = { x1, y1 };
+		double x1 = x - diag * cos(theta + diagAngle);
+		double y1 = y - diag * sin(theta + diagAngle);
+		Vector2D v1 = { (float)x1, (float)y1 };
 
-		float x2 = x1 + w * cos(theta);
-		float y2 = y1 + w * sin(theta);
-		Vector2D v2 = { x2, y2 };
+		double x2 = x1 + w * cos(theta);
+		double y2 = y1 + w * sin(theta);
+		Vector2D v2 = { (float)x2, (float)y2 };
 
-		float x3 = 2 * x - x1;
-		float y3 = 2 * y - y1;
-		Vector2D v3 = { x3, y3 };
+		double x3 = 2 * x - x1;
+		double y3 = 2 * y - y1;
+		Vector2D v3 = { (float)x3, (float)y3 };
 
-		float x4 = x1 - h * sin(theta);
-		float y4 = y1 + h * cos(theta);
-		Vector2D v4 = { x4, y4 };
+		double x4 = x1 - h * sin(theta);
+		double y4 = y1 + h * cos(theta);
+		Vector2D v4 = { (float)x4, (float)y4 };
 
 		vertices[0] = v1;
 		vertices[1] = v2;
