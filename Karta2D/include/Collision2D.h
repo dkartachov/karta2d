@@ -13,7 +13,8 @@ public:
 	static bool satDetection(Entity& entA, Entity& entB);
 
 	// normals
-	static std::pair<Vector2D, float> getBoxBoxNormal(Entity& thisEntity, Entity& entity);
+	static float getOverlap(const Vector2D normal, const std::vector<Vector2D> entAVertices, const std::vector<Vector2D> entBVertices);
+	static std::pair<Vector2D, float> getSATNormal(Entity& entA, Entity& entB);
 	static std::pair<Vector2D, float> getCircleCircleNormal(Entity& entA, Entity& entB);
 	static std::pair<Vector2D, float> getBoxCircleNormal(Entity& box, Entity& circle);
 
