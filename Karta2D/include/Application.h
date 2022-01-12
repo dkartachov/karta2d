@@ -26,12 +26,12 @@ private:
 private:
 	bool simulate = false;
 	static Application* instance;
-	const int FRAME_RATE = 60;
+	const int FRAME_RATE = 144;
 	bool quit;
 
 	SDL_Event event;
 	Graphics* graphics;
 	Timer* timer;
 
-	Entity box1, ground, box2;
+	Entity box, box2, ground;
 };
