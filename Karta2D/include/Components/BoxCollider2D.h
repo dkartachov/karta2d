@@ -44,8 +44,9 @@ public:
 		size.y = height * METERS_TO_PIXELS;
 	}
 
+	// Get size of the box collider in meters
 	Vector2D getSize() const {
-		return size;
+		return size * PIXELS_TO_METERS;
 	}
 
 	float getDiag() const {
