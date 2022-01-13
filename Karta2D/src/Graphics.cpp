@@ -81,44 +81,37 @@ bool Graphics::init() {
 
 void Graphics::drawBox(Transform2D transform, Vector2D size, bool fill, SDL_Color color) {
 
-	double x = transform.getPosition().x * METERS_TO_PIXELS, y = transform.getPosition().y * METERS_TO_PIXELS;
+	// vertices calculation
+	Vector2D position = transform.getPosition() * METERS_TO_PIXELS;
 	double w = size.x, h = size.y;
+	double rotation = transform.getRotation() * DEG_TO_RAD;
+	double diagonal = sqrt(w * w + h * h);
+	double diagonalAngle = atan2(h, w);
 
-	double diag = sqrt(0.25 * (w * w + h * h));
-	double diagAngle = atan2(h, w);
-	double theta = transform.getRotation() * DEG_TO_RAD;
-
-	double x1 = x - diag * cos(theta + diagAngle);
-	double y1 = y - diag * sin(theta + diagAngle);
-
-	float x2 = x1 + w * cos(theta);
-	float y2 = y1 + w * sin(theta);
-
-	float x3 = 2 * x - x1;
-	float y3 = 2 * y - y1;
-
-	float x4 = x1 - h * sin(theta);
-	float y4 = y1 + h * cos(theta);
+	Vector2D vertex1 = position - (diagonal / 2) * Vector2D(cos(diagonalAngle + rotation), sin(diagonalAngle + rotation));
+	Vector2D vertex2 = position - (diagonal / 2) * Vector2D(-cos(diagonalAngle - rotation), sin(diagonalAngle - rotation));
+	Vector2D vertex3 = position - (diagonal / 2) * Vector2D(-cos(diagonalAngle + rotation), -sin(diagonalAngle + rotation));
+	Vector2D vertex4 = position - (diagonal / 2) * Vector2D(cos(diagonalAngle - rotation), -sin(diagonalAngle - rotation));
 
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
-	SDL_RenderDrawLineF(renderer, x1, y1, x2, y2); //(x1,y1) to (x2,y2)
-	SDL_RenderDrawLineF(renderer, x2, y2, x3, y3); //(x2,y2) to (x3,y3)
-	SDL_RenderDrawLineF(renderer, x3, y3, x4, y4); //(x3,y3) to (x4,y4)
-	SDL_RenderDrawLineF(renderer, x4, y4, x1, y1); //(x4,y4) to (x1,y1)
+	SDL_RenderDrawLineF(renderer, vertex1.x, vertex1.y, vertex2.x, vertex2.y); // vertex 1 to vertex 2
+	SDL_RenderDrawLineF(renderer, vertex2.x, vertex2.y, vertex3.x, vertex3.y); // vertex 2 to vertex 3
+	SDL_RenderDrawLineF(renderer, vertex3.x, vertex3.y, vertex4.x, vertex4.y); // vertex 3 to vertex 4
+	SDL_RenderDrawLineF(renderer, vertex4.x, vertex4.y, vertex1.x, vertex1.y); // vertex 4 to vertex 1
 
-	double xx1 = x1, yy1 = y1;
-	double xx2 = x2, yy2 = y2;
+	double xx1 = vertex1.x, yy1 = vertex1.y;
+	double xx2 = vertex2.x, yy2 = vertex2.y;
 	double d = 0.5 * sqrt(2);
-	double dx = abs(d * sin(theta));
-	double dy = abs(d * cos(theta));
+	double dx = abs(d * sin(rotation));
+	double dy = abs(d * cos(rotation));
 
 	if (fill) {
-		while (abs(xx1 - x4) >= d || abs(yy1 - y4) >= d) {
-			xx1 = xx1 > x4 ? xx1 - dx : (xx1 < x4 ? xx1 + dx : xx1);
-			yy1 = yy1 > y4 ? yy1 - dy : (yy1 < y4 ? yy1 + dy : yy1);
-			xx2 = xx2 > x3 ? xx2 - dx : (xx2 < x3 ? xx2 + dx : xx2);
-			yy2 = yy2 > y3 ? yy2 - dy : (yy2 < y3 ? yy2 + dy : yy2);
+		while (abs(xx1 - vertex4.x) >= d || abs(yy1 - vertex4.y) >= d) {
+			xx1 = xx1 > vertex4.x ? xx1 - dx : (xx1 < vertex4.x ? xx1 + dx : xx1);
+			yy1 = yy1 > vertex4.y ? yy1 - dy : (yy1 < vertex4.y ? yy1 + dy : yy1);
+			xx2 = xx2 > vertex3.x ? xx2 - dx : (xx2 < vertex3.x ? xx2 + dx : xx2);
+			yy2 = yy2 > vertex3.y ? yy2 - dy : (yy2 < vertex3.y ? yy2 + dy : yy2);
 
 			SDL_RenderDrawLineF(renderer, xx1, yy1, xx2, yy2);
 		}
