@@ -22,30 +22,32 @@ public:
 		transform = entity->GetComponent<Transform2D>();
 	}
 
-	// Set mass of rigid body in kg
-	void setMass(float mass) {
+	// Set the mass of the rigid body in kg.
+	void setMass(double mass) {
 		this->mass = mass;
 	}
 
-	float getMass() const {
+	// Get the mass of the rigid body in kg.
+	double getMass() const {
 		return mass;
 	}
 	
-	// Set velocity of rigid body in m/s
+	// Set the velocity of the rigid body in m/s.
 	void setVelocity(Vector2D velocity) {
 		this->velocity = velocity;
 	}
 
+	// Get the velocity of the rigid body in m/s.
 	Vector2D getVelocity() const {
 		return velocity;
 	}
 
-	// Set the angular speed of the object in deg/s (counter-clockwise positive).
+	// Set the angular speed of the rigid body in deg/s (clockwise positive).
 	void setAngularSpeed(double angularSpeed) {
 		this->angularSpeed = angularSpeed;
 	}
 
-	// Get the angular speed of the rigid body in deg/s (counter-clockwise positive).
+	// Get the angular speed of the rigid body in deg/s (clockwise positive).
 	double getAngularSpeed() const {
 		return angularSpeed;
 	}
@@ -55,6 +57,7 @@ public:
 		this->acceleration = acceleration;
 	}
 
+	// Get the acceleration of the rigid body in m/s/s.
 	Vector2D getAcceleration() const {
 		return acceleration;
 	}
@@ -64,22 +67,24 @@ public:
 		acceleration = (force / mass);
 	}
 
+	// Enable/Disable gravity for the rigidbody.
 	void setGravity(bool state) {
 		gravity = state;
 	}
 
+	// Check if rigidbody has gravity enabled.
 	bool hasGravity() const {
 		return gravity;
 	}
 
 	void update() override {
-		float deltaT = Timer::Instance()->getDeltaTime();
+		double deltaT = Timer::Instance()->getDeltaTime();
 
 		// linear
-		float deltaX = velocity.x * deltaT + 0.5 * acceleration.x * deltaT * deltaT;
+		double deltaX = velocity.x * deltaT + 0.5 * acceleration.x * deltaT * deltaT;
 		velocity.x += acceleration.x * deltaT;
 
-		float deltaY = velocity.y * deltaT + 0.5 * ((double)acceleration.y + (gravity ? g : 0)) * deltaT * deltaT;
+		double deltaY = velocity.y * deltaT + 0.5 * (acceleration.y + (gravity ? g : 0)) * deltaT * deltaT;
 		velocity.y += (acceleration.y + (gravity ? g : 0)) * deltaT;
 
 		transform->translate({ velocity.x * deltaT, velocity.y * deltaT });
@@ -97,9 +102,9 @@ public:
 	}
 
 private:
-	const float g = 9.81;
+	const double g = 9.81;
 	bool gravity;
-	float mass;
+	double mass;
 	Transform2D* transform;
 	Vector2D velocity;
 	double angularSpeed;
