@@ -65,7 +65,7 @@ public:
 		return position * PIXELS_TO_METERS;
 	}
 
-	// Set rotation to a specific angle in degrees (measured counter-clockwise).
+	// Set rotation to a specific angle in degrees (measured clockwise).
 	void setRotation(float angle) {
 		if (entity->hasChildren()) {
 			for (auto& child : entity->getChildren()) {
@@ -80,12 +80,12 @@ public:
 			}
 		}
 
-		this->rotation = -angle * DEG_TO_RAD;
+		this->rotation = angle * DEG_TO_RAD;
 	}
 
-	// Get rotation in degrees
+	// Get rotation in degrees (measured clockwise).
 	float getRotation(SPACE space = world) {
-		if (rotation * RAD_TO_DEG > 360 || rotation * RAD_TO_DEG < -360) rotation = 0;
+		//if (rotation * RAD_TO_DEG > 360 || rotation * RAD_TO_DEG < -360) rotation = 0;
 
 		return rotation * RAD_TO_DEG;
 	}
@@ -103,7 +103,7 @@ public:
 		position += amount * METERS_TO_PIXELS;
 	}
 
-	// Rotate by a certain amount in degrees (counter-clockwise positive)
+	// Rotate by a certain amount in degrees (clockwise positive)
 	void rotate(float delta) {
 		if (entity->hasChildren()) {
 			for (auto& child : entity->getChildren()) {
@@ -118,7 +118,7 @@ public:
 			}
 		}
 		
-		rotation -= delta * DEG_TO_RAD;
+		rotation += delta * DEG_TO_RAD;
 	}
 
 	void init() override {
