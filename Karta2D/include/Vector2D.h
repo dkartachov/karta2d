@@ -8,26 +8,26 @@ constexpr double METERS_TO_PIXELS = 100.0;
 constexpr double PIXELS_TO_METERS = 1.0 / METERS_TO_PIXELS;
 
 struct Vector2D {
-	float x, y;
+	double x, y;
 
 	Vector2D() {
 		x = y = 0;
 	}
 
-	Vector2D(float x, float y) {
+	Vector2D(double x, double y) {
 		this->x = x;
 		this->y = y;
 	}
 
-	float MagnitudeSquared() {
+	double MagnitudeSquared() {
 		return x * x + y * y;
 	}
 
-	float Magnitude() {
-		return (float) sqrt(MagnitudeSquared());
+	double Magnitude() {
+		return sqrt(MagnitudeSquared());
 	}
 
-	inline static float dot(const Vector2D& a, const Vector2D& b) {
+	inline static double dot(const Vector2D& a, const Vector2D& b) {
 		return (a.x * b.x + a.y * b.y);
 	}
 
@@ -39,14 +39,14 @@ struct Vector2D {
 		return Vector2D(-v.y, v.x);
 	}
 
-	// Rotate vector by an angle in degrees (counter-clockwise positive)
-	inline void rotateVector(float angle) {
+	// Rotate vector by an angle in degrees (clockwise positive)
+	inline void rotateVector(double angle) {
 		angle = angle * DEG_TO_RAD;
 
 		double cosine = cos(angle);
 		double sine = sin(angle);
-		float newX = x * cosine + y * sine;
-		float newY = -x * sine + y * cosine;
+		double newX = x * cosine - y * sine;
+		double newY = x * sine + y * cosine;
 
 		x = newX;
 		y = newY;
@@ -73,19 +73,19 @@ struct Vector2D {
 	}
 };
 
-inline float operator* (const Vector2D& u, const Vector2D& v) {
+inline double operator* (const Vector2D& u, const Vector2D& v) {
 	return u.x * v.y - u.y * v.x;
 }
 
-inline Vector2D operator* (const float& c, const Vector2D& v) {
+inline Vector2D operator* (const double& c, const Vector2D& v) {
 	return Vector2D(c * v.x, c * v.y);
 }
 
-inline Vector2D operator* (const Vector2D& v, const float& c) {
+inline Vector2D operator* (const Vector2D& v, const double& c) {
 	return operator*(c, v);
 }
 
-inline Vector2D operator/ (const Vector2D& v, const float& c) {
+inline Vector2D operator/ (const Vector2D& v, const double& c) {
 	return Vector2D(v.x / c, v.y / c);
 }
 
