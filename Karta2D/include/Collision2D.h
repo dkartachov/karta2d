@@ -17,7 +17,7 @@ public:
 	// normals
 	static float getOverlap(const Vector2D normal, const std::vector<Vector2D> entAVertices, const std::vector<Vector2D> entBVertices);
 	static std::vector<Vector2D> getContactPoints(const Vector2D normal, const std::vector<Vector2D> entVertices);
-	static std::vector<Vector2D> getContactVertices(const Vector2D collisionNormal, const std::vector<Vector2D> entVertices, bool min = true);
+	static std::vector<Vector2D> getContactVertices(const Vector2D collisionNormal, std::vector<Vector2D> entityVertices, std::vector<Vector2D> collisionNormalVertices);
 	static CollisionInfo getCollisionInfo(Entity& entA, Entity& entB);
 	static std::pair<Vector2D, float> getCircleCircleNormal(Entity& entA, Entity& entB);
 	static std::pair<Vector2D, float> getBoxCircleNormal(Entity& box, Entity& circle);

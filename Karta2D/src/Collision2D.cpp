@@ -122,12 +122,15 @@ bool Collision2D::overlap(const Vector2D normal, const std::vector<Vector2D>& en
 }
 
 bool Collision2D::satDetection(Entity& entA, Entity& entB) {
-	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
-	float entADiag = entA.GetComponent<BoxCollider2D>()->getDiag();
-
-	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
-	float entBDiag = entB.GetComponent<BoxCollider2D>()->getDiag();
-
+	// TODO: For optimization purposes, maybe return early if the entities are way too far
+	// to even bother with collision detection?
+	// 
+	//Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
+	//float entADiag = entA.GetComponent<BoxCollider2D>()->getDiag();
+	//
+	//Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
+	//float entBDiag = entB.GetComponent<BoxCollider2D>()->getDiag();
+	//
 	//if ((entAPos - entBPos).Magnitude() > entADiag + entBDiag) return false;
 
 	std::vector<Vector2D> entANormals, entBNormals;
@@ -219,59 +222,47 @@ std::vector<Vector2D> Collision2D::getContactPoints(const Vector2D normal, const
 	return contactPoints;
 }
 
-std::vector<Vector2D> Collision2D::getContactVertices(const Vector2D collisionNormal, const std::vector<Vector2D> entVertices, bool min) {
-	// Entity projections
-	float proj1 = Vector2D::dot(collisionNormal, entVertices[0]);
-	float proj2 = Vector2D::dot(collisionNormal, entVertices[1]);
-	float proj3 = Vector2D::dot(collisionNormal, entVertices[2]);
-	float proj4 = Vector2D::dot(collisionNormal, entVertices[3]);
-
-	float extremity = min ? std::min({ proj1, proj2, proj3, proj4 }) : std::max({ proj1, proj2, proj3, proj4 });
-
+std::vector<Vector2D> Collision2D::getContactVertices(const Vector2D collisionNormal, std::vector<Vector2D> entityVertices, std::vector<Vector2D> collisionNormalVertices) {
 	std::vector<Vector2D> contactVertices;
 
-	if (fabs(proj1 - extremity) < 2) {
-		contactVertices.push_back(entVertices[0] * PIXELS_TO_METERS);
-	}
+	// check if any entity vertex is inside the collided entity
+	for (auto& vertex : entityVertices) {
+		bool contact = true;
 
-	if (fabs(proj2 - extremity) < 2) {
-		contactVertices.push_back(entVertices[1] * PIXELS_TO_METERS);
-	}
+		for (size_t i = 0; i < 4; i++) {
+			Vector2D collisionVertex = collisionNormalVertices[i];
+			Vector2D nextCollisionVertex = i < 3 ? collisionNormalVertices[i + 1] : collisionNormalVertices[0];
 
-	if (fabs(proj3 - extremity) < 2) {
-		contactVertices.push_back(entVertices[2] * PIXELS_TO_METERS);
-	}
+			Vector2D vertexToVertex = nextCollisionVertex - collisionVertex;
+			Vector2D collisionVertexToVertex = vertex - collisionVertex;
 
-	if (fabs(proj4 - extremity) < 2) {
-		contactVertices.push_back(entVertices[3] * PIXELS_TO_METERS);
+			if (vertexToVertex * collisionVertexToVertex < 0) {
+				contact = false;
+				break;
+			}
+		}
+
+		if (contact) contactVertices.push_back(vertex);
 	}
 
 	return contactVertices;
 }
 
 CollisionInfo Collision2D::getCollisionInfo(Entity& entA, Entity& entB) {
-	Vector2D entAPos = entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
-	float entADiag = entA.GetComponent<BoxCollider2D>()->getDiag();
-
-	Vector2D entBPos = entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS;
-	float entBDiag = entB.GetComponent<BoxCollider2D>()->getDiag();
-
 	std::vector<Vector2D> entANormals, entBNormals;
 	std::vector<Vector2D> entAVertices, entBVertices;
 
 	if (entA.HasComponent<BoxCollider2D>()) {
-		//entA.GetComponent<BoxCollider2D>()->update();
 		entANormals = entA.GetComponent<BoxCollider2D>()->getNormals();
 		entAVertices = entA.GetComponent<BoxCollider2D>()->getVertices();
 	}
 
 	if (entB.HasComponent<BoxCollider2D>()) {
-		//entB.GetComponent<BoxCollider2D>()->update();
 		entBNormals = entB.GetComponent<BoxCollider2D>()->getNormals();
 		entBVertices = entB.GetComponent<BoxCollider2D>()->getVertices();
 	}
 
-	float dA = 1000;
+	double dA = 1000;
 	Vector2D nA = zeroVector;
 
 	// check all entity A normals
@@ -284,7 +275,7 @@ CollisionInfo Collision2D::getCollisionInfo(Entity& entA, Entity& entB) {
 		}
 	}
 
-	float dB = 1000;
+	double dB = 1000;
 	Vector2D nB = zeroVector;
 
 	// check all entity B normals
@@ -297,45 +288,32 @@ CollisionInfo Collision2D::getCollisionInfo(Entity& entA, Entity& entB) {
 		}
 	}
 
-	float smallestOverlap;
+	double smallestOverlap;
 	Vector2D collisionNormal;
 	std::vector<Vector2D> contactVertices;
 
-	if (dA < dB) {
-		smallestOverlap = dA;
-		collisionNormal = nA;
+	bool isANormal = dA < dB;
 
-		Vector2D rAtoB = entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition();
+	smallestOverlap = isANormal ? dA : dB;
+	collisionNormal = isANormal ? nA : nB;
 
-		if (Vector2D::dot(rAtoB, collisionNormal) < 0) {
-			collisionNormal = -collisionNormal;
-		}
+	Vector2D rAtoB = entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition();
+	
+	collisionNormal *= Vector2D::dot(rAtoB, collisionNormal) < 0 ? -1 : 1;
 
-		contactVertices = getContactVertices(collisionNormal, entBVertices, true);
-	}
-	else {
-		smallestOverlap = dB;
-		collisionNormal = nB;
+	std::vector<Vector2D> entityVertices = isANormal ? entBVertices : entAVertices;
+	std::vector<Vector2D> collisionNormalVertices = isANormal ? entAVertices : entBVertices;
 
-		Vector2D rAtoB = entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition();
+	contactVertices = getContactVertices(collisionNormal, entityVertices, collisionNormalVertices);
 
-		if (Vector2D::dot(rAtoB, collisionNormal) < 0) {
-			collisionNormal = -collisionNormal;
-		}
+	printf("contact vertices = %d\n", (int)contactVertices.size());
 
-		contactVertices = getContactVertices(collisionNormal, entAVertices, false);
-	}
-
-	//printf("dA = %.2f and dB = %.2f\n", dA, dB);
-	//printf("contact vertex = (%.2f, %.2f)\n", contactVertex.x, contactVertex.y);
-	//printf("dot(nA, nB) = %.6f\n", Vector2D::dot(nA, nB));
-
-	return CollisionInfo(smallestOverlap * PIXELS_TO_METERS, collisionNormal, contactVertices);
+	return CollisionInfo(smallestOverlap, collisionNormal, contactVertices);
 }
 
 std::pair<Vector2D, float> Collision2D::getCircleCircleNormal(Entity& entA, Entity& entB) {
 	Vector2D normal = (entB.GetComponent<Transform2D>()->getPosition() - entA.GetComponent<Transform2D>()->getPosition()).normalize();
-	float penetration = fabs((entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS - entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS).Magnitude() - (entA.GetComponent<CircleCollider2D>()->getRadius() + entB.GetComponent<CircleCollider2D>()->getRadius()));
+	double penetration = fabs((entB.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS - entA.GetComponent<Transform2D>()->getPosition() * METERS_TO_PIXELS).Magnitude() - (entA.GetComponent<CircleCollider2D>()->getRadius() + entB.GetComponent<CircleCollider2D>()->getRadius()));
 	return { normal, penetration };
 }
 
@@ -384,15 +362,17 @@ std::pair<Vector2D, float> Collision2D::getBoxCircleNormal(Entity& box, Entity& 
 }
 
 void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, CollisionInfo collisionInfo) {
+	if (collisionInfo.collisionVertices.size() < 1) return;
+
 	bool entityAHasRb = entityA.HasComponent<Rigidbody2D>();
 	bool entityBHasRb = entityB.HasComponent<Rigidbody2D>();
 
 	Vector2D uA, cA, wAcA, vA;
-	float wA = 0;
+	double wA = 0;
 	
 	if (entityAHasRb && !entityBHasRb && collisionInfo.collisionVertices.size() > 1) {
 		// setting rotation like this makes absolutely no sense so should change
-		entityA.GetComponent<Transform2D>()->setRotation(-entityB.GetComponent<Transform2D>()->getRotation());
+		//entityA.GetComponent<Transform2D>()->setRotation(-entityB.GetComponent<Transform2D>()->getRotation());
 		entityA.GetComponent<Transform2D>()->translate(-collisionInfo.penetration * collisionInfo.collisionNormal);
 		entityA.GetComponent<Rigidbody2D>()->setAngularSpeed(0);
 
@@ -403,11 +383,10 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 		float cosTheta = Vector2D::dot(verticesVector, tangentialVector);
 		float theta = acos(cosTheta) * RAD_TO_DEG;
 
-
 		Vector2D entityAVel = entityA.GetComponent<Rigidbody2D>()->getVelocity();
 
 		float velAlongNormal = Vector2D::dot(entityAVel, collisionInfo.collisionNormal);
-		float restitution = 0.3;
+		float restitution = 0.5;
 		float j = -(1 + restitution) * velAlongNormal;
 
 		float entityAInvMass = 1.0 / entityA.GetComponent<Rigidbody2D>()->getMass();
@@ -426,23 +405,19 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 		collisionInfo.collisionVertices[0] += -collisionInfo.penetration * collisionInfo.collisionNormal;
 
 		uA = entityA.GetComponent<Rigidbody2D>()->getVelocity();
-		wA = -entityA.GetComponent<Rigidbody2D>()->getAngularSpeed() * DEG_TO_RAD;
+		wA = entityA.GetComponent<Rigidbody2D>()->getAngularSpeed() * DEG_TO_RAD;
 		cA = entityA.GetComponent<Transform2D>()->getPosition() - collisionInfo.collisionVertices[0];
 		wAcA = wA * Vector2D(cA.y, -cA.x);
 
 		vA = uA + wAcA;
 	}
 
-	printf("collision vertices = %d\n", collisionInfo.collisionVertices.size());
-	printf("initial vA = %.6f\n", uA.Magnitude());
-	printf("initial wA = %.6f\n", wA * RAD_TO_DEG);
-
 	Vector2D uB, cB, wBcB, vB;
-	float wB = 0;
+	double wB = 0;
 
 	if (entityBHasRb) {
 		uB = entityB.GetComponent<Rigidbody2D>()->getVelocity();
-		wB = -entityB.GetComponent<Rigidbody2D>()->getAngularSpeed() * DEG_TO_RAD;
+		wB = entityB.GetComponent<Rigidbody2D>()->getAngularSpeed() * DEG_TO_RAD;
 		cB = entityB.GetComponent<Transform2D>()->getPosition() - collisionInfo.collisionVertices[0];
 		wBcB = wB * Vector2D(cB.y, -cB.x);
 
@@ -450,33 +425,33 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 	}
 
 	Vector2D relV = vA - vB;
-	float impV = Vector2D::dot(collisionInfo.collisionNormal, relV);
-	float restitution = 0.3;
+	double impV = Vector2D::dot(collisionInfo.collisionNormal, relV);
+	double restitution = 0.5;
 
-	float invMassA = entityAHasRb ? 1.0 / entityA.GetComponent<Rigidbody2D>()->getMass() : 0;
-	float invMoiA = 0;
-	float moiA;
+	double invMassA = entityAHasRb ? 1.0 / entityA.GetComponent<Rigidbody2D>()->getMass() : 0;
+	double invMoiA = 0;
+	double moiA;
 
 	if (entityAHasRb) {
-		moiA = (1.0 / 12.0) * (1.0 / invMassA) * (1 * 1 + 0.2 * 0.2);
+		moiA = (1.0 / 12.0) * (1.0 / invMassA) * (1.0 * 1.0 + 0.2 * 0.2);
 		Vector2D n = collisionInfo.collisionNormal;
 		invMoiA = (1.0 / moiA) * (n.x * cA.y - n.y * cA.x) * (n.x * cA.y - n.y * cA.x);
 	}
 
-	float invMassB = entityBHasRb ? 1.0 / entityB.GetComponent<Rigidbody2D>()->getMass() : 0;
-	float invMoiB = 0;
-	float moiB;
+	double invMassB = entityBHasRb ? 1.0 / entityB.GetComponent<Rigidbody2D>()->getMass() : 0;
+	double invMoiB = 0;
+	double moiB;
 
 	if (entityBHasRb) {
-		moiB = (1.0 / 12.0) * (1.0 / invMassB) * (6 * 6 + 0.5 * 0.5);
+		moiB = (1.0 / 12.0) * (1.0 / invMassB) * (6.0 * 6.0 + 0.5 * 0.5);
 		Vector2D n = collisionInfo.collisionNormal;
 		invMoiB = (1.0 / moiB) * (n.x * cB.y - n.y * cB.x) * (n.x * cB.y - n.y * cB.x);
 	}
 
-	float reducedMass = invMassA + invMoiA + invMassB + invMoiB;
+	double reducedMass = invMassA + invMoiA + invMassB + invMoiB;
 	reducedMass = 1.0 / reducedMass;
 
-	float impulse = (1.0 + restitution) * reducedMass * impV;
+	double impulse = (1.0 + restitution) * reducedMass * impV;
 
 	if (entityAHasRb && entityBHasRb) {
 		Vector2D deltaVA = -impulse * invMassA * collisionInfo.collisionNormal;
@@ -487,11 +462,11 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 
 		entityA.GetComponent<Transform2D>()->translate(-0.5 * collisionInfo.penetration * collisionInfo.collisionNormal);
 		entityA.GetComponent<Rigidbody2D>()->setVelocity(uA + deltaVA);
-		entityA.GetComponent<Rigidbody2D>()->setAngularSpeed((-1) * (wA + deltaWA) * RAD_TO_DEG);
+		entityA.GetComponent<Rigidbody2D>()->setAngularSpeed((wA + deltaWA) * RAD_TO_DEG);
 
 		entityB.GetComponent<Transform2D>()->translate(0.5 * collisionInfo.penetration * collisionInfo.collisionNormal);
 		entityB.GetComponent<Rigidbody2D>()->setVelocity(uB + deltaVB);
-		entityB.GetComponent<Rigidbody2D>()->setAngularSpeed((-1) * (wB + deltaWB) * RAD_TO_DEG);
+		entityB.GetComponent<Rigidbody2D>()->setAngularSpeed((wB + deltaWB) * RAD_TO_DEG);
 
 		return;
 	}
@@ -500,12 +475,8 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 		Vector2D deltaVA = -impulse * invMassA * collisionInfo.collisionNormal;
 		float deltaWA = -impulse * (1.0 / moiA) * (cA.y * collisionInfo.collisionNormal.x - cA.x * collisionInfo.collisionNormal.y);
 
-		//printf("deltaV_A = %.6f\n", deltaVA.Magnitude());
-		//printf("deltaW_A = %.6f\n", deltaWA * RAD_TO_DEG);
-
-		//entityA.GetComponent<Transform2D>()->translate(-collisionInfo.penetration * collisionInfo.collisionNormal);
 		entityA.GetComponent<Rigidbody2D>()->setVelocity(uA + deltaVA);
-		entityA.GetComponent<Rigidbody2D>()->setAngularSpeed((-1) * (wA + deltaWA) * RAD_TO_DEG);
+		entityA.GetComponent<Rigidbody2D>()->setAngularSpeed((wA + deltaWA) * RAD_TO_DEG);
 	}
 }
 
@@ -532,31 +503,12 @@ void Collision2D::resolveCollision(Entity& thisEntity, Entity& entity, Vector2D 
 
 	Vector2D impulse = j * collisionNormal;
 
-	std::vector<Vector2D> entityContactPoints = getContactPoints(collisionNormal, entity.GetComponent<BoxCollider2D>()->getVertices());
-	//std::vector<Vector2D> thisEntityContactPoints = getContactPoints(collisionNormal, thisEntity.GetComponent<BoxCollider2D>()->getVertices());
-
-	Vector2D contactToEntity;
-	Vector2D entityFinalVel = entityVel - entityInvMass * impulse;
-	float initialOmega = entityHasRb ? entity.GetComponent<Rigidbody2D>()->getAngularSpeed() : 0;
-	float finalOmega = 0;
-
-	if (entityContactPoints.size() < 2) {
-		contactToEntity = entityContactPoints[0] * PIXELS_TO_METERS - entity.GetComponent<Transform2D>()->getPosition();
-		float contactToEntityMagSqrd = contactToEntity.MagnitudeSquared();
-
-		finalOmega += (contactToEntity.x * entityFinalVel.y - contactToEntity.y * entityFinalVel.x) / contactToEntityMagSqrd;
-	}
-
-	finalOmega *= RAD_TO_DEG;
-	finalOmega += initialOmega;
-
 	if (thisEntityHasRb && entityHasRb) {
 		thisEntity.GetComponent<Transform2D>()->translate(0.5 * penetration * collisionNormal);
 		thisEntity.GetComponent<Rigidbody2D>()->setVelocity(thisEntityVel + thisEntityInvMass * impulse);
 
 		entity.GetComponent<Transform2D>()->translate(-0.5 * penetration * collisionNormal);
 		entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - entityInvMass * impulse);
-		entity.GetComponent<Rigidbody2D>()->setAngularSpeed(finalOmega);
 
 		thisEntity.GetComponent<BoxCollider2D>()->update();
 		entity.GetComponent<BoxCollider2D>()->update();
@@ -567,7 +519,6 @@ void Collision2D::resolveCollision(Entity& thisEntity, Entity& entity, Vector2D 
 	if (thisEntityHasRb) {
 		thisEntity.GetComponent<Transform2D>()->translate(penetration * collisionNormal);
 		thisEntity.GetComponent<Rigidbody2D>()->setVelocity(thisEntityVel + thisEntityInvMass * impulse);
-		thisEntity.GetComponent<Rigidbody2D>()->setAngularSpeed(finalOmega);
 
 		thisEntity.GetComponent<BoxCollider2D>()->update();
 	}
@@ -575,7 +526,6 @@ void Collision2D::resolveCollision(Entity& thisEntity, Entity& entity, Vector2D 
 	if (entityHasRb) {
 		entity.GetComponent<Transform2D>()->translate(-penetration * collisionNormal);
 		entity.GetComponent<Rigidbody2D>()->setVelocity(entityVel - entityInvMass * impulse);
-		entity.GetComponent<Rigidbody2D>()->setAngularSpeed(finalOmega);
 
 		entity.GetComponent<BoxCollider2D>()->update();
 	}
@@ -585,6 +535,9 @@ void Collision2D::resolveCollisions() {
 	std::vector<Entity*>& entities = EntityManager::getInstance().getEntities();
 
 	for (auto& thisEntity : entities) {
+		// skip if this entity doesn't have a rigidbody component
+		if (!thisEntity->HasComponent<Rigidbody2D>()) continue;
+
 		// skip if this entity doesn't have any collider
 		if (!thisEntity->HasComponent<BoxCollider2D>() && !thisEntity->HasComponent<CircleCollider2D>()) continue;
 
@@ -595,16 +548,14 @@ void Collision2D::resolveCollisions() {
 			// skip if entity doesn't have any collider
 			if (!entity->HasComponent<BoxCollider2D>() && !entity->HasComponent<CircleCollider2D>()) continue;
 
-			// skip if neither entity have rigidbody component
-			if (!thisEntity->HasComponent<Rigidbody2D>() && !entity->HasComponent<Rigidbody2D>()) continue;
-
 			// DETECT AND RESOLVE BOX-BOX COLLISIONS //
 			if (thisEntity->HasComponent<BoxCollider2D>() && entity->HasComponent<BoxCollider2D>()) {
 				if (satDetection(*thisEntity, *entity)) {
+					thisEntity->GetComponent<BoxCollider2D>()->update();
+					entity->GetComponent<BoxCollider2D>()->update();
 					CollisionInfo collisionInfo = getCollisionInfo(*thisEntity, *entity);
 
 					resolveFullCollision(*thisEntity, *entity, collisionInfo);
-					//resolveCollision(*thisEntity, *entity, collisionInfo.collisionNormal, collisionInfo.penetration);
 				}
 			}
 
