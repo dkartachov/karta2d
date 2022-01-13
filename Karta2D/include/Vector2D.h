@@ -74,7 +74,7 @@ struct Vector2D {
 };
 
 inline float operator* (const Vector2D& u, const Vector2D& v) {
-	return u.x * v.y - u.y - v.x;
+	return u.x * v.y - u.y * v.x;
 }
 
 inline Vector2D operator* (const float& c, const Vector2D& v) {
