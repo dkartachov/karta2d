@@ -35,6 +35,10 @@ struct Vector2D {
 		return Vector2D(x / Magnitude(), y / Magnitude());
 	}
 
+	inline static Vector2D perpendicular(Vector2D& v) {
+		return Vector2D(-v.y, v.x);
+	}
+
 	// Rotate vector by an angle in degrees (counter-clockwise positive)
 	inline void rotateVector(float angle) {
 		angle = angle * DEG_TO_RAD;
@@ -68,6 +72,10 @@ struct Vector2D {
 		return Vector2D(-x, -y);
 	}
 };
+
+inline float operator* (const Vector2D& u, const Vector2D& v) {
+	return u.x * v.y - u.y - v.x;
+}
 
 inline Vector2D operator* (const float& c, const Vector2D& v) {
 	return Vector2D(c * v.x, c * v.y);
