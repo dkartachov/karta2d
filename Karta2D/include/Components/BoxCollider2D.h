@@ -30,26 +30,28 @@ public:
 		transform = entity->GetComponent<Transform2D>();
 	}
 
+	// Set the visibility of the box collider.
 	void setVisibility(bool show) {
 		this->show = show;
 	}
 
+	// Check whether the box collider is visible.
 	bool isVisible() const {
 		return show;
 	}
 
-	// Set width and height of the collider in meters
-	void setSize(float width, float height) {
+	// Set the width and height of the box collider in meters.
+	void setSize(double width, double height) {
 		size.x = width * METERS_TO_PIXELS;
 		size.y = height * METERS_TO_PIXELS;
 	}
 
-	// Get size of the box collider in meters
+	// Get the size of the box collider in meters.
 	Vector2D getSize() const {
 		return size * PIXELS_TO_METERS;
 	}
 
-	float getDiag() const {
+	double getDiag() const {
 		return sqrt(0.25 * (size.x * size.x + size.y * size.y));
 	}
 
@@ -63,14 +65,14 @@ public:
 
 	void update() override {
 		// normals calculation
-		float angle = transform->getRotation() * DEG_TO_RAD;
-		float cosine = cos(angle);
-		float sine = sin(angle);
+		double angle = transform->getRotation() * DEG_TO_RAD;
+		double cosine = cos(angle);
+		double sine = sin(angle);
 
-		Vector2D n1 = { cosine, sine };
-		Vector2D n2 = -n1;
+		Vector2D n2 = { cosine, sine };
+		Vector2D n4 = -n2;
 		Vector2D n3 = { -sine, cosine };
-		Vector2D n4 = -n3;
+		Vector2D n1 = -n3;
 
 		normals[0] = n1;
 		normals[1] = n2;
@@ -78,35 +80,21 @@ public:
 		normals[3] = n4;
 
 		// vertices calculation
-		double x = transform->getPosition().x * METERS_TO_PIXELS, y = transform->getPosition().y * METERS_TO_PIXELS;
-		double w = size.x, h = size.y;
+		Vector2D position = transform->getPosition();
+		double w = size.x * PIXELS_TO_METERS, h = size.y * PIXELS_TO_METERS;
+		double rotation = transform->getRotation() * DEG_TO_RAD;
+		double diagonal = sqrt(w * w + h * h);
+		double diagonalAngle = atan2(h, w);
 
-		double diag = sqrt(0.25 * (w * w + h * h));
-		double diagAngle = atan2(h, w);
-		double theta = transform->getRotation() * DEG_TO_RAD;
+		Vector2D vertex1 = position - (diagonal / 2) * Vector2D(cos(diagonalAngle + rotation), sin(diagonalAngle + rotation));
+		Vector2D vertex2 = position - (diagonal / 2) * Vector2D(-cos(diagonalAngle - rotation), sin(diagonalAngle - rotation));
+		Vector2D vertex3 = position - (diagonal / 2) * Vector2D(-cos(diagonalAngle + rotation), -sin(diagonalAngle + rotation));
+		Vector2D vertex4 = position - (diagonal / 2) * Vector2D(cos(diagonalAngle - rotation), -sin(diagonalAngle - rotation));
 
-		double x1 = x - diag * cos(theta + diagAngle);
-		double y1 = y - diag * sin(theta + diagAngle);
-		Vector2D v1 = { (float)x1, (float)y1 };
-
-		double x2 = x1 + w * cos(theta);
-		double y2 = y1 + w * sin(theta);
-		Vector2D v2 = { (float)x2, (float)y2 };
-
-		double x3 = 2 * x - x1;
-		double y3 = 2 * y - y1;
-		Vector2D v3 = { (float)x3, (float)y3 };
-
-		double x4 = x1 - h * sin(theta);
-		double y4 = y1 + h * cos(theta);
-		Vector2D v4 = { (float)x4, (float)y4 };
-
-		vertices[0] = v1;
-		vertices[1] = v2;
-		vertices[2] = v3;
-		vertices[3] = v4;
-
-		//std::printf("%s normal vectors: (%.2f, %.2f), (%.2f, %.2f), (%.2f, %.2f), (%.2f, %.2f)\n", entity->getName().c_str(), n1.x, n1.y, n2.x, n2.y, n3.x, n3.y, n4.x, n4.y);
+		vertices[0] = vertex1;
+		vertices[1] = vertex2;
+		vertices[2] = vertex3;
+		vertices[3] = vertex4;
 	}
 
 	void render() override {
@@ -120,7 +108,7 @@ public:
 	}
 
 public:
-	float restitution;
+	double restitution;
 
 private:
 	Transform2D* transform;
