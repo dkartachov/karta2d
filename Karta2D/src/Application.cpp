@@ -27,12 +27,12 @@ Application::Application() {
 	box.GetComponent<Box>()->fill();
 	box.GetComponent<Box>()->setColor(255, 0, 0, 255);
 	box.AddComponent<Rigidbody2D>();
-	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2 - 200), true);
+	box.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2 + 50, Graphics::Instance()->SCREEN_HEIGHT / 2 - 200), true);
 	box.GetComponent<BoxCollider2D>()->setSize(1, 0.2);
 	box.GetComponent<Rigidbody2D>()->setMass(1);
-	box.GetComponent<Rigidbody2D>()->setVelocity({ -2, -2 });
-	box.GetComponent<Rigidbody2D>()->setAngularSpeed(350);
-	box.GetComponent<Transform2D>()->setRotation(0);
+	box.GetComponent<Rigidbody2D>()->setVelocity({ 0, 0 });
+	box.GetComponent<Rigidbody2D>()->setAngularSpeed(0);
+	box.GetComponent<Transform2D>()->setRotation(-30);
 	//box.GetComponent<Rigidbody2D>()->setGravity(false);
 
 	ground.setName("Ground");
@@ -41,14 +41,14 @@ Application::Application() {
 	ground.GetComponent<Box>()->setSize(6, 0.5);
 	ground.GetComponent<Box>()->fill();
 	ground.GetComponent<Box>()->setColor(0, 0, 255, 255);
-	ground.AddComponent<Rigidbody2D>();
+	//ground.AddComponent<Rigidbody2D>();
 	ground.GetComponent<Transform2D>()->setPosition(Vector2D(Graphics::Instance()->SCREEN_WIDTH / 2, Graphics::Instance()->SCREEN_HEIGHT / 2), true);
 	ground.GetComponent<BoxCollider2D>()->setSize(6, 0.5);
-	ground.GetComponent<Rigidbody2D>()->setMass(400);
-	ground.GetComponent<Rigidbody2D>()->setVelocity({ 0, 0 });
-	ground.GetComponent<Rigidbody2D>()->setAngularSpeed(0);
-	ground.GetComponent<Transform2D>()->setRotation(0);
-	ground.GetComponent<Rigidbody2D>()->setGravity(false);
+	//ground.GetComponent<Rigidbody2D>()->setMass(400);
+	//ground.GetComponent<Rigidbody2D>()->setVelocity({ 0, 0 });
+	//ground.GetComponent<Rigidbody2D>()->setAngularSpeed(0);
+	ground.GetComponent<Transform2D>()->setRotation(-10);
+	//ground.GetComponent<Rigidbody2D>()->setGravity(false);
 
 	std::vector<Entity*> entities = { &ground, &box };
 	EntityManager::getInstance().addEntities(entities);
