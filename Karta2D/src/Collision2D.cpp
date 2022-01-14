@@ -380,16 +380,16 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 		verticesVector.normalize();
 
 		Vector2D tangentialVector = Vector2D(-collisionInfo.collisionNormal.y, collisionInfo.collisionNormal.x);
-		float cosTheta = Vector2D::dot(verticesVector, tangentialVector);
-		float theta = acos(cosTheta) * RAD_TO_DEG;
+		double cosTheta = Vector2D::dot(verticesVector, tangentialVector);
+		double theta = acos(cosTheta) * RAD_TO_DEG;
 
 		Vector2D entityAVel = entityA.GetComponent<Rigidbody2D>()->getVelocity();
 
-		float velAlongNormal = Vector2D::dot(entityAVel, collisionInfo.collisionNormal);
-		float restitution = 0.5;
-		float j = -(1 + restitution) * velAlongNormal;
+		double velAlongNormal = Vector2D::dot(entityAVel, collisionInfo.collisionNormal);
+		double restitution = 0.5;
+		double j = -(1 + restitution) * velAlongNormal;
 
-		float entityAInvMass = 1.0 / entityA.GetComponent<Rigidbody2D>()->getMass();
+		double entityAInvMass = 1.0 / entityA.GetComponent<Rigidbody2D>()->getMass();
 
 		j /= entityAInvMass;
 
@@ -433,7 +433,7 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 	double moiA;
 
 	if (entityAHasRb) {
-		moiA = (1.0 / 12.0) * (1.0 / invMassA) * (1.0 * 1.0 + 0.2 * 0.2);
+		moiA = entityA.GetComponent<Rigidbody2D>()->getMomentOfInertiaCOM(); 
 		Vector2D n = collisionInfo.collisionNormal;
 		invMoiA = (1.0 / moiA) * (n.x * cA.y - n.y * cA.x) * (n.x * cA.y - n.y * cA.x);
 	}
@@ -443,7 +443,7 @@ void Collision2D::resolveFullCollision(Entity& entityA, Entity& entityB, Collisi
 	double moiB;
 
 	if (entityBHasRb) {
-		moiB = (1.0 / 12.0) * (1.0 / invMassB) * (6.0 * 6.0 + 0.5 * 0.5);
+		moiB = entityB.GetComponent<Rigidbody2D>()->getMomentOfInertiaCOM(); 
 		Vector2D n = collisionInfo.collisionNormal;
 		invMoiB = (1.0 / moiB) * (n.x * cB.y - n.y * cB.x) * (n.x * cB.y - n.y * cB.x);
 	}
