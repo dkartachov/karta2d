@@ -8,6 +8,7 @@ public:
 	Rigidbody2D() {
 		gravity = true;
 		mass = 1;
+		momentOfInertiaCOM = 0;
 		transform = nullptr;
 		velocity = zeroVector;
 		angularSpeed = 0;
@@ -20,16 +21,34 @@ public:
 		}
 
 		transform = entity->GetComponent<Transform2D>();
+
+		if (!entity->HasComponent<BoxCollider2D>()) {
+			entity->AddComponent<BoxCollider2D>();
+		}
+
+		boxCollider2D = entity->GetComponent<BoxCollider2D>();
+
+		setMomentOfInertiaCOM();
 	}
 
 	// Set the mass of the rigid body in kg.
 	void setMass(double mass) {
 		this->mass = mass;
+
+		setMomentOfInertiaCOM();
 	}
 
 	// Get the mass of the rigid body in kg.
 	double getMass() const {
 		return mass;
+	}
+
+	void setMomentOfInertiaCOM() {
+		momentOfInertiaCOM = (1.0 / 12.0) * mass * boxCollider2D->getSize().MagnitudeSquared();
+	}
+
+	double getMomentOfInertiaCOM() const {
+		return momentOfInertiaCOM;
 	}
 	
 	// Set the velocity of the rigid body in m/s.
@@ -105,7 +124,9 @@ private:
 	const double g = 9.81;
 	bool gravity;
 	double mass;
+	double momentOfInertiaCOM;
 	Transform2D* transform;
+	BoxCollider2D* boxCollider2D;
 	Vector2D velocity;
 	double angularSpeed;
 	Vector2D acceleration;
