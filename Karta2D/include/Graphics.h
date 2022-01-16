@@ -29,7 +29,7 @@ public:
 	static const int SCREEN_HEIGHT = 1000;
 private:
 	const char* TITLE = "Karta2D";
-	const SDL_Color BACKGROUND = { 128, 128, 128, 255 };
+	const SDL_Color BACKGROUND = { 135, 206, 255, 255 };
 	static Graphics* instance;
 	SDL_Window* window;
 public:
