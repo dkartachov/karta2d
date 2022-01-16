@@ -9,10 +9,13 @@ public:
 		gravity = true;
 		mass = 1;
 		momentOfInertiaCOM = 0;
+		momentOfInertiaConstraint = 0;
 		transform = nullptr;
 		velocity = zeroVector;
 		angularSpeed = 0;
 		acceleration = zeroVector;
+		constrained = false;
+		constraint = zeroVector;
 	}
 
 	void init() override {
@@ -54,6 +57,10 @@ public:
 	// Set the velocity of the rigid body in m/s.
 	void setVelocity(Vector2D velocity) {
 		this->velocity = velocity;
+
+		if (constrained) {
+			this->angularSpeed = (transform->getPosition() - constraint) * this->velocity * RAD_TO_DEG;
+		}
 	}
 
 	// Get the velocity of the rigid body in m/s.
@@ -64,6 +71,11 @@ public:
 	// Set the angular speed of the rigid body in deg/s (clockwise positive).
 	void setAngularSpeed(double angularSpeed) {
 		this->angularSpeed = angularSpeed;
+
+		if (constrained) {
+			Vector2D constraintToRb = transform->getPosition() - constraint;
+			this->velocity = this->angularSpeed * Vector2D(-constraintToRb.y, constraintToRb.x);
+		}
 	}
 
 	// Get the angular speed of the rigid body in deg/s (clockwise positive).
@@ -96,8 +108,56 @@ public:
 		return gravity;
 	}
 
+	// Constrain rigidbody to a point in space relative to its position, in meters.
+	void setContraint(Vector2D point) {
+		constraint = transform->getPosition() + point;
+		constrained = true;
+
+		// moment of inertia about constraint
+		momentOfInertiaConstraint = momentOfInertiaCOM + mass * (transform->getPosition() - constraint).MagnitudeSquared();
+	}
+
+	// Check if the rigid body is constrained.
+	bool isConstrained() const {
+		return constrained;
+	}
+
 	void update() override {
 		double deltaT = Timer::Instance()->getDeltaTime();
+
+		if (constrained) {
+			Vector2D constraintToRb = transform->getPosition() - constraint;
+
+			double theta0 = atan2(constraintToRb.y, constraintToRb.x);
+
+			double currentRotation = transform->getRotation();
+
+			double rel = fabs(velocity.Magnitude() / constraintToRb.Magnitude()) - fabs(angularSpeed * DEG_TO_RAD);
+
+			double omega0 = angularSpeed * DEG_TO_RAD;
+
+
+			Vector2D velocity0 = omega0 * Vector2D(-constraintToRb.y, constraintToRb.x);
+
+			// Runge-Kutta 2nd order
+			double k1 = omega0;
+			double l1 = gravity ? (1.0 / momentOfInertiaConstraint) * mass * g * constraintToRb.Magnitude() * cos(theta0) : 0.0;
+			double k2 = omega0 + deltaT * l1;
+			double l2 = gravity ? (1.0 / momentOfInertiaConstraint) * mass * g * constraintToRb.Magnitude() * cos(theta0 + deltaT * omega0) : 0.0;
+
+			double theta = theta0 + 0.5 * deltaT * (k1 + k2);
+			double omega = omega0 + 0.5 * deltaT * (l1 + l2);
+
+			velocity = constraintToRb.Magnitude() * omega * Vector2D(-sin(theta), cos(theta));
+			angularSpeed = omega * RAD_TO_DEG;
+
+			Vector2D positionDelta = constraint + constraintToRb.Magnitude() * Vector2D(cos(theta), sin(theta));
+
+			transform->setPosition(positionDelta);
+			transform->setRotation((theta - theta0) * RAD_TO_DEG + currentRotation);
+
+			return;
+		}
 
 		// linear
 		double deltaX = velocity.x * deltaT + 0.5 * acceleration.x * deltaT * deltaT;
@@ -125,9 +185,12 @@ private:
 	bool gravity;
 	double mass;
 	double momentOfInertiaCOM;
+	double momentOfInertiaConstraint;
 	Transform2D* transform;
 	BoxCollider2D* boxCollider2D;
 	Vector2D velocity;
 	double angularSpeed;
 	Vector2D acceleration;
+	bool constrained;
+	Vector2D constraint;
 };
