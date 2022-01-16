@@ -30,7 +30,7 @@ public:
 
 struct CollisionInfo {
 public:
-	CollisionInfo(float penetration, Vector2D collisionNormal, std::vector<Vector2D> collisionVertices) {
+	CollisionInfo(float penetration, Vector2D collisionNormal, std::vector<Vector2D> collisionVertices, int entityId) {
 		this->penetration = penetration;
 		this->collisionNormal = collisionNormal;
 		this->collisionVertices = collisionVertices;
@@ -39,4 +39,5 @@ public:
 	float penetration;
 	Vector2D collisionNormal;
 	std::vector<Vector2D> collisionVertices;
+	int entityId;
 };
